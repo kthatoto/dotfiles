@@ -1,0 +1,15 @@
+[user]
+  name = kthatoto
+  email = kthatoto@gmail.com
+[color]
+  ui = true
+[alias]
+  graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
+  st = status
+  cm = commit -m
+  ch = checkout
+  br = branch
+  cp = cherry-pick -n
+  p  = push
+[core]
+  editor = nvim
