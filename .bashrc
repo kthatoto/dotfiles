@@ -7,4 +7,5 @@ PROMPT_COMMAND=_roll_prime_dice;
 function _get_prime() {
   echo -en '${PRIMES_3DIGIT[$prime_dice]}'
 }
-PS1="\[\033[33m\]$(_get_prime)\[\033[35m\]:\w\n\[\033[0m\]\$ "
+source ~/.git-prompt.sh
+PS1="\[\033[33m\]\t\[\033[35m\]:\w\n\[\033[0m\]\$ "
