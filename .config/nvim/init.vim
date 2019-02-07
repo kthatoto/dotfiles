@@ -169,6 +169,11 @@ nnoremap <C-l> <C-w>l
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-c> <C-w>c
+
+nnoremap <C-o> <C-w>>
+nnoremap <C-i> <C-w><
+nnoremap <C-y> <C-w>+
+nnoremap <C-n> <C-w>-
 " Dim when splited window is inactive
 function! s:DimInactiveWindows()
   for i in range(1, tabpagewinnr(tabpagenr(), '$'))
