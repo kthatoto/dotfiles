@@ -5,8 +5,8 @@ export LC_ALL=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-autoload -Uz compinit
-compinit
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}'
 
 export HISTFILE=${HOME}/.zsh_history
 export HISTSIZE=2000
