@@ -1,12 +1,27 @@
 PROMPT="%F{blue}`date "+%m/%d(%a)"`%f%F{yellow}:%*%f%F{magenta}:%~%f
 $ "
+precmd() {
+  vcs_info
+  RPROMPT=$vcs_info_msg_0_
+}
+
 export LANGUAGE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-autoload -Uz compinit && compinit
+fpath=(~/.zsh/completion $fpath)
+autoload -U compinit
+compinit -u
 zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}'
+
+autoload -Uz vcs_info
+setopt prompt_subst
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
+zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
+zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
+zstyle ':vcs_info:*' actionformats '[%b|%a]'
 
 export HISTFILE=${HOME}/.zsh_history
 export HISTSIZE=2000
