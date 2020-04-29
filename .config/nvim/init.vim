@@ -20,12 +20,14 @@ if dein#load_state('/Users/tk1to/.config/nvim/dein/')
   call dein#add('Shougo/neosnippet-snippets')
 
   call dein#add('Shougo/denite.nvim')
+  call dein#add('Shougo/neomru.vim')
   call dein#add('scrooloose/nerdtree')
   call dein#add('mattn/emmet-vim')
   call dein#add('terryma/vim-smooth-scroll')
   call dein#add('nathanaelkane/vim-indent-guides')
   call dein#add('rhysd/accelerated-jk')
   call dein#add('vim-scripts/AnsiEsc.vim')
+  call dein#add('simeji/winresizer') " https://qiita.com/simeji/items/e78cc0cf046acc93722=
 
   call dein#add('plasticboy/vim-markdown')
   call dein#add('kannokanno/previm')
@@ -36,17 +38,26 @@ if dein#load_state('/Users/tk1to/.config/nvim/dein/')
   call dein#add('tomtom/tcomment_vim')
   call dein#add('sophacles/vim-processing')
   call dein#add('tpope/vim-surround')
+  call dein#add('tpope/vim-fugitive')
 
   call dein#add('elixir-editors/vim-elixir')
   call dein#add('slim-template/vim-slim')
   call dein#add('posva/vim-vue')
+  call dein#add('leafgarland/typescript-vim')
+  " call dein#add('mxw/vim-jsx')
+  call dein#add('MaxMEllon/vim-jsx-pretty')
   " call dein#add('othree/yajs.vim')
   call dein#add('cakebaker/scss-syntax.vim')
   call dein#add('digitaltoad/vim-pug')
+  call dein#add('iloginow/vim-stylus')
   call dein#add('justmao945/vim-clang')
+  call dein#add('vim-scripts/gnuplot-syntax-highlighting')
+  call dein#add('Shougo/vinarise.vim')
 
   call dein#add('lervag/vimtex')
   call dein#add('thinca/vim-quickrun')
+
+  " call dein#add('twitvim/twitvim')
 
   call dein#add('johngrib/vim-game-code-break')
 
@@ -84,7 +95,7 @@ noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 10, 2)<CR>
 noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 10, 4)<CR>
 noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 10, 4)<CR>
 
-nnoremap <silent><C-e> :NERDTreeToggle<CR>
+" nnoremap <silent><C-e> :NERDTreeToggle<CR>
 
 nmap j <Plug>(accelerated_jk_gj)
 nmap k <Plug>(accelerated_jk_gk)
@@ -117,11 +128,11 @@ inoremap <silent> jj <ESC>
 " 不可視文字表示
 set list
 set listchars=tab:»-,trail:-,nbsp:%
-
 set title
-
 set hlsearch
 
+set foldmethod=indent
+set foldlevel=30
 set tabstop=2
 set shiftwidth=2
 set softtabstop=0
@@ -169,6 +180,10 @@ nnoremap <C-l> <C-w>l
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-c> <C-w>c
+nnoremap s= <C-w>=
+nnoremap sn gt
+nnoremap sp gT
+nnoremap st :tabnew<CR>
 " Dim when splited window is inactive
 function! s:DimInactiveWindows()
   for i in range(1, tabpagewinnr(tabpagenr(), '$'))
@@ -198,3 +213,12 @@ augroup END
 " Denite config
 let g:python3_host_prog = expand('/usr/local/bin/python3')
 nnoremap <silent> <C-t> :<C-u>Denite file_rec<CR>
+nnoremap <silent> <C-b> :<C-u>Denite file_mru<CR>
+nnoremap <silent> <C-g> :<C-u>Denite grep -auto-preview<CR>
+
+" " Twitvim config
+" let twitvim_enable_python = 1
+" let twitvim_browser_cmd = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
+" let twitvim_force_ssl = 1
+" let twitvim_count = 40
+" neovimでjs_decodeが使えなくて使えない、json_decodeを使う必要あり
