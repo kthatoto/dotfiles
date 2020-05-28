@@ -1,118 +1,11 @@
 let &shell='/bin/bash --login'
 
-"dein Scripts-----------------------------
-if &compatible
-  set nocompatible               " Be iMproved
-endif
-
-" Required:
-set runtimepath+=/Users/kthatoto/.config/nvim/dein/repos/github.com/Shougo/dein.vim
-
-" Required:
-if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
-  call dein#begin('/Users/kthatoto/.config/nvim/dein/')
-
-  " Let dein manage dein
-  " Required:
-  call dein#add('/Users/kthatoto/.config/nvim/dein/repos/github.com/Shougo/dein.vim')
-
-  call dein#add('Shougo/neosnippet.vim')
-  call dein#add('Shougo/neosnippet-snippets')
-
-  call dein#add('Shougo/denite.nvim')
-  call dein#add('Shougo/neomru.vim')
-
-  call dein#add('scrooloose/nerdtree')
-  call dein#add('mattn/emmet-vim')
-  call dein#add('terryma/vim-smooth-scroll')
-  call dein#add('nathanaelkane/vim-indent-guides')
-  call dein#add('rhysd/accelerated-jk')
-  call dein#add('vim-scripts/AnsiEsc.vim')
-  call dein#add('simeji/winresizer') " https://qiita.com/simeji/items/e78cc0cf046acc93722=
-
-  call dein#add('plasticboy/vim-markdown')
-  call dein#add('kannokanno/previm')
-  call dein#add('embear/vim-localvimrc')
-  call dein#add('tyru/open-browser.vim')
-  call dein#add('cohama/lexima.vim')
-  call dein#add('terryma/vim-multiple-cursors')
-  call dein#add('tomtom/tcomment_vim')
-  call dein#add('sophacles/vim-processing')
-  call dein#add('tpope/vim-surround')
-  call dein#add('tpope/vim-fugitive')
-
-  call dein#add('elixir-editors/vim-elixir')
-  call dein#add('slim-template/vim-slim')
-  call dein#add('posva/vim-vue')
-  call dein#add('leafgarland/typescript-vim')
-  " call dein#add('mxw/vim-jsx')
-  call dein#add('MaxMEllon/vim-jsx-pretty')
-  " call dein#add('othree/yajs.vim')
-  call dein#add('cakebaker/scss-syntax.vim')
-  call dein#add('digitaltoad/vim-pug')
-  call dein#add('iloginow/vim-stylus')
-  call dein#add('justmao945/vim-clang')
-  call dein#add('vim-scripts/gnuplot-syntax-highlighting')
-  call dein#add('Shougo/vinarise.vim')
-
-  call dein#add('lervag/vimtex')
-  call dein#add('thinca/vim-quickrun')
-
-  " call dein#add('twitvim/twitvim')
-
-  call dein#add('johngrib/vim-game-code-break')
-
-  " You can specify revision/branch/tag.
-  call dein#add('Shougo/vimshell', { 'rev': '3787e5' })
-
-  " Required:
-  call dein#end()
-  call dein#save_state()
-endif
-
-" Required:
-filetype plugin indent on
-syntax enable
-
-" If you want to install not installed plugins on startup.
-if dein#check_install()
-  call dein#install()
-endif
-
-"End dein Scripts-------------------------
-
-"#################
-"# plugin config #
-"#################
+runtime! settings/dein.vim
 
 " vue syntax highlight
 autocmd FileType vue syntax sync fromstart
 
-"nathanaelkane/vim-indent-guides
-let g:indent_guides_enable_on_vim_startup = 1
-"terryma/vim-smooth-scroll
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 10, 2)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 10, 2)<CR>
-noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 10, 4)<CR>
-noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 10, 4)<CR>
-
-" nnoremap <silent><C-e> :NERDTreeToggle<CR>
-
-nmap j <Plug>(accelerated_jk_gj)
-nmap k <Plug>(accelerated_jk_gk)
-
-let g:vim_markdown_folding_disabled = 1
-au BufRead,BufNewFile *.md   set filetype=markdown
-au BufNewFile,BufRead *.twig set filetype=html
-
-let g:clang_c_options = '-std=c11'
-let g:clang_cpp_options = '-std=c++1z -stdlib=libc++ –pedantic-errors'
-" let g:clang_format_auto = 1
-let g:clang_format_style = 'Google'
-let g:clang_check_syntax_auto = 1
-
-"load lvimrc without ask
-let g:localvimrc_ask=0
+runtime! settings/plugins/*.vim
 
 syntax on
 colorscheme gruvbox
@@ -126,28 +19,20 @@ set cursorline
 nnoremap ; :
 nnoremap : ;
 inoremap <silent> jj <ESC>
-" 不可視文字表示
 set list
 set listchars=tab:»-,trail:-,nbsp:%
 set title
 set hlsearch
-
 set foldmethod=indent
 set foldlevel=30
 set tabstop=2
 set shiftwidth=2
 set softtabstop=0
 set expandtab
-
-set expandtab "タブを空白にする
-set autoindent "改行した時に前の行のインデントを継承
+set autoindent
 set smartindent
-
 set clipboard=unnamed
-
-"大文字小文字の区別をしない
 set ignorecase
-"大文字で検索時は大文字のみ
 set smartcase
 
 " statusline
@@ -158,20 +43,6 @@ set statusline+=[ENC=%{&fileencoding}]
 
 " terminalモードの設定
 tnoremap <Esc> <C-\><C-n>
-
-" Plugin (managed by NeoBundle)
-"==============================
-" for LaTeX
-let g:vimtex_fold_envs = 0
-" autocmd
-"==============================
-augroup filetype
-  autocmd!
-  " tex file (I always use latex)
-  autocmd BufRead,BufNewFile *.tex set filetype=tex
-augroup END
-" disable the conceal function
-" let g:tex_conceal=''
 
 " split config
 nnoremap vs :vsplit<CR>
@@ -185,46 +56,7 @@ nnoremap s= <C-w>=
 nnoremap sn gt
 nnoremap sp gT
 nnoremap st :tabnew<CR>
-" Dim when splited window is inactive
-function! s:DimInactiveWindows()
-  for i in range(1, tabpagewinnr(tabpagenr(), '$'))
-    let l:range = ""
-    if i != winnr()
-      if &wrap
-        " HACK: when wrapping lines is enabled, we use the maximum number
-        " of columns getting highlighted. This might get calculated by
-        " looking for the longest visible line and using a multiple of
-        " winwidth().
-        let l:width=256 " max
-      else
-        let l:width=winwidth(i)
-      endif
-      let l:range = join(range(1, l:width), ',')
-    endif
-    call setwinvar(i, '&colorcolumn', l:range)
-  endfor
-endfunction
-augroup DimInactiveWindows
-  au!
-  au WinEnter * call s:DimInactiveWindows()
-  au WinEnter * set cursorline
-  au WinLeave * set nocursorline
-augroup END
 
-" Denite config
-let g:python3_host_prog = expand('/Users/kthatoto/.anyenv/envs/pyenv/shims/python')
-nnoremap <silent> <C-t> :<C-u>Denite file/rec<CR>
-nnoremap <silent> <C-b> :<C-u>Denite file_mru<CR>
-nnoremap <silent> <C-g> :<C-u>Denite grep<CR>
-autocmd FileType denite call s:denite_my_settings()
-function! s:denite_my_settings() abort
-  nnoremap <silent><buffer><expr> i denite#do_map('open_filter_buffer')
-  nnoremap <silent><buffer><expr> q denite#do_map('quit')
-endfunction
+runtime! settings/dim-inactive-panes.vim
 
-" " Twitvim config
-" let twitvim_enable_python = 1
-" let twitvim_browser_cmd = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
-" let twitvim_force_ssl = 1
-" let twitvim_count = 40
-" neovimでjs_decodeが使えなくて使えない、json_decodeを使う必要あり
+runtime! settings/denite.vim
