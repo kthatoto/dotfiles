@@ -1,10 +1,3 @@
-cask_args appdir: "/Applications"
-tap "caskroom/cask"
-
-cask "google-chrome"
-cask "slack"
-cask "iterm2"
-
 brew "git"
 brew "docker"
 brew "anyenv"
@@ -13,9 +6,17 @@ brew "jq"
 brew "neovim"
 brew "yarn"
 brew "watch"
+brew "peco"
+
+cask_args appdir: "/Applications"
+tap "homebrew/cask-cask"
 
 cask "docker"
+cask "google-chrome"
+cask "slack"
+cask "iterm2"
+cask "1password"
+cask "skype"
 
 brew "mas"
-mas "1Password", id: 568903335
 mas "LINE", id: 443904275
