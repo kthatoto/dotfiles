@@ -8,7 +8,7 @@ brew "watch"
 brew "peco"
 
 cask_args appdir: "/Applications"
-tap "homebrew/cask-cask"
+tap "homebrew/cask"
 
 cask "google-chrome"
 cask "firefox"
