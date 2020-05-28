@@ -6,6 +6,7 @@ brew "neovim"
 brew "yarn"
 brew "watch"
 brew "peco"
+brew "ghq"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"

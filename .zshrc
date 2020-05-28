@@ -49,22 +49,7 @@ alias drs='docker-compose restart'
 alias dl='docker-compose logs -f --tail=100'
 alias brew-tree="brew deps --tree --installed"
 alias raku-staging-tag='git tag staging-$(git rev-parse HEAD)'
-
-################## often use directory shortcut ######################
-alias raku='cd ~/Desktop/xbit/rakushifu'
-function _move-favorite-directory() {
-  local directories=(
-    "Desktop/xbit/rakushifu"
-    "Desktop/projects/browser-mario"
-    "Desktop/projects/routee-frontend"
-    "Desktop/projects/routee-api"
-    "Desktop/projects/hatoto"
-    "Desktop/projects/mokumoku-online"
-  )
-  cd $HOME/$(echo ${(j.\n.)directories} | peco)
-}
-alias ww="_move-favorite-directory"
-######################################################################
+alias repo='cd $(ghq root)/$(ghq list | peco)'
 
 # for homebrew
 export PATH="/usr/local/bin:$PATH"
