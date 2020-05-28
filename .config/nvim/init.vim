@@ -6,15 +6,15 @@ if &compatible
 endif
 
 " Required:
-set runtimepath+=/Users/tk1to/.config/nvim/dein/repos/github.com/Shougo/dein.vim
+set runtimepath+=/Users/kthatoto/.config/nvim/dein/repos/github.com/Shougo/dein.vim
 
 " Required:
-if dein#load_state('/Users/tk1to/.config/nvim/dein/')
-  call dein#begin('/Users/tk1to/.config/nvim/dein/')
+if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
+  call dein#begin('/Users/kthatoto/.config/nvim/dein/')
 
   " Let dein manage dein
   " Required:
-  call dein#add('/Users/tk1to/.config/nvim/dein/repos/github.com/Shougo/dein.vim')
+  call dein#add('/Users/kthatoto/.config/nvim/dein/repos/github.com/Shougo/dein.vim')
 
   call dein#add('Shougo/neosnippet.vim')
   call dein#add('Shougo/neosnippet-snippets')
