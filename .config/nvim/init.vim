@@ -211,7 +211,7 @@ augroup DimInactiveWindows
 augroup END
 
 " Denite config
-let g:python3_host_prog = expand('/usr/local/bin/python3')
+let g:python3_host_prog = expand('/usr/bin/python3')
 nnoremap <silent> <C-t> :<C-u>Denite file_rec<CR>
 nnoremap <silent> <C-b> :<C-u>Denite file_mru<CR>
 nnoremap <silent> <C-g> :<C-u>Denite grep -auto-preview<CR>
