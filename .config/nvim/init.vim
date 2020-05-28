@@ -21,6 +21,7 @@ if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
 
   call dein#add('Shougo/denite.nvim')
   call dein#add('Shougo/neomru.vim')
+
   call dein#add('scrooloose/nerdtree')
   call dein#add('mattn/emmet-vim')
   call dein#add('terryma/vim-smooth-scroll')
@@ -211,10 +212,15 @@ augroup DimInactiveWindows
 augroup END
 
 " Denite config
-let g:python3_host_prog = expand('/usr/bin/python3')
-nnoremap <silent> <C-t> :<C-u>Denite file_rec<CR>
+let g:python3_host_prog = expand('/Users/kthatoto/.anyenv/envs/pyenv/shims/python')
+nnoremap <silent> <C-t> :<C-u>Denite file/rec<CR>
 nnoremap <silent> <C-b> :<C-u>Denite file_mru<CR>
-nnoremap <silent> <C-g> :<C-u>Denite grep -auto-preview<CR>
+nnoremap <silent> <C-g> :<C-u>Denite grep<CR>
+autocmd FileType denite call s:denite_my_settings()
+function! s:denite_my_settings() abort
+  nnoremap <silent><buffer><expr> i denite#do_map('open_filter_buffer')
+  nnoremap <silent><buffer><expr> q denite#do_map('quit')
+endfunction
 
 " " Twitvim config
 " let twitvim_enable_python = 1
