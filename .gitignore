@@ -1,2 +1,4 @@
 /.config/anyenv
 /.config/htop
+/.config/configstore
+/.config/gcloud
