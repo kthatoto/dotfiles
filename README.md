@@ -49,3 +49,8 @@ $ vi
 :call dein#update()
 :UpdateRemotePlugins
 ```
+
+## gcloud
+```
+$ curl https://sdk.cloud.google.com | zsh
+```
