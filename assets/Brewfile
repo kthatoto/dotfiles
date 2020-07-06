@@ -24,6 +24,7 @@ cask "karabiner-elements"
 cask "postman"
 cask "keyboard-maestro"
 cask "dropbox"
+cask "notion"
 
 brew "mas"
 mas "LINE", id: 443904275
