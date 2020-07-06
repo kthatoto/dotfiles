@@ -54,3 +54,9 @@ $ vi
 ```
 $ curl https://sdk.cloud.google.com | zsh
 ```
+
+## etc
+```
+// to display dotfiles on finder
+command + shift + .
+```
