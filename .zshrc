@@ -1,8 +1,7 @@
-PROMPT="%F{blue}`date "+%m/%d(%a)"`%f%F{yellow}:%*%f%F{magenta}:%~%f
-$ "
 precmd() {
   vcs_info
-  RPROMPT=$vcs_info_msg_0_
+  PROMPT="%F{blue}`date "+%m/%d(%a)"`%f%F{yellow}:%*%f%F{magenta}:%~%f$vcs_info_msg_0_
+$ "
 }
 
 export LANGUAGE=en_US.UTF-8
