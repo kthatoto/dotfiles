@@ -41,7 +41,7 @@ $ anyenv install pyenv
 * Neovim
 ```
 $ cd ~/dotfiles/.config/nvim/dein
-$ ./dein_installer.sh
+$ ./dein_installer.sh .
 $ pyenv install <version>
 $ pyenv global <version>
 $ pip install neovim // for denite.vim
@@ -53,4 +53,10 @@ $ vi
 ## gcloud
 ```
 $ curl https://sdk.cloud.google.com | zsh
+```
+
+## etc
+```
+// to display dotfiles on finder
+command + shift + .
 ```
