@@ -1,6 +1,6 @@
 precmd() {
   vcs_info
-  PROMPT="%F{blue}`date "+%m/%d(%a)"`%f%F{yellow}:%*%f%F{magenta}:%~%f$vcs_info_msg_0_
+  PROMPT="%F{blue}`date "+%m/%d(%a)"`%f%F{yellow}:%*%f%F{magenta}:%~%f:$vcs_info_msg_0_
 $ "
 }
 
