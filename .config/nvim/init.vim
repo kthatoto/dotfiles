@@ -4,6 +4,7 @@ runtime! settings/dein.vim
 
 " vue syntax highlight
 autocmd FileType vue syntax sync fromstart
+runtime! filetypes/*.vim
 
 runtime! settings/plugins/*.vim
 
