@@ -7,6 +7,7 @@ brew "yarn"
 brew "watch"
 brew "peco"
 brew "ghq"
+brew "gh"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
