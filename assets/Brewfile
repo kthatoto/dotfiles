@@ -8,6 +8,7 @@ brew "watch"
 brew "peco"
 brew "ghq"
 brew "gh"
+brew "nkf"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
