@@ -9,6 +9,7 @@ brew "peco"
 brew "ghq"
 brew "gh"
 brew "nkf"
+brew "mysql"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
