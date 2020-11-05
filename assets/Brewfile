@@ -10,6 +10,7 @@ brew "ghq"
 brew "gh"
 brew "nkf"
 brew "mysql"
+brew "circleci"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
