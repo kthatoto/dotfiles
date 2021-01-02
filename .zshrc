@@ -35,8 +35,8 @@ zshaddhistory() {
   local line=${1%%$'\n'}
   local cmd=${line%% *}
   [[ true
-    && ${cmd} != (cd|ls|git|vi)
-    && ${cmd} != (jj|jjj|jjjj)
+    && ${cmd} != (cd|ls|vi)
+    && ${cmd} != (ww|jj|jjj|jjjj)
   ]]
 }
 
