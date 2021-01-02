@@ -23,11 +23,29 @@ zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
 
 export HISTFILE=${HOME}/.zsh_history
-export HISTSIZE=2000
+export HISTSIZE=5000
 export SAVEHIST=10000
-# export HISTORY_IGNORE="(cd|ls|jj|ls|vi|git)"
 setopt hist_ignore_dups
+setopt hist_ignore_all_dups
 setopt EXTENDED_HISTORY
+setopt inc_append_history # 履歴をインクリメンタルに追加
+setopt hist_reduce_blanks # 余分な空白は詰めて記録
+setopt hist_no_store # historyコマンドは履歴に登録しない
+zshaddhistory() {
+  local line=${1%%$'\n'}
+  local cmd=${line%% *}
+  [[ true
+    && ${cmd} != (cd|ls|git|vi)
+    && ${cmd} != (jj|jjj|jjjj)
+  ]]
+}
+
+hey() {
+  local line=${1%%$'\n'}
+  local cmd=${line%% *}
+  echo $line
+  echo $cmd
+}
 
 setopt no_beep # ビープ音を無効
 setopt ignore_eof # Ctrl+Dで終了しない
