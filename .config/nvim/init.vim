@@ -13,8 +13,8 @@ colorscheme gruvbox
 set background=dark
 
 set number
-set relativenumber
-nnoremap <C-o> :set relativenumber!<CR>
+" set relativenumber
+" nnoremap <C-o> :set relativenumber!<CR>
 set ruler
 set cursorline
 nnoremap ; :
