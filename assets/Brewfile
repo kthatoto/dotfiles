@@ -12,6 +12,8 @@ brew "nkf"
 brew "mysql"
 brew "circleci"
 brew "coreutils"
+brew "selenium-server-standalone"
+brew "chromedriver"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
