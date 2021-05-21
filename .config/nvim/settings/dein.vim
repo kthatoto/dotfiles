@@ -50,6 +50,7 @@ if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
   call dein#add('justmao945/vim-clang')
   call dein#add('vim-scripts/gnuplot-syntax-highlighting')
   call dein#add('Shougo/vinarise.vim')
+  call dein#add('vim-crystal/vim-crystal')
 
   call dein#add('lervag/vimtex')
   call dein#add('thinca/vim-quickrun')
