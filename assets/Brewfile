@@ -14,7 +14,7 @@ brew "circleci"
 brew "coreutils"
 brew "selenium-server-standalone"
 brew "chromedriver"
-brew "crystal"
+brew "icr"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
