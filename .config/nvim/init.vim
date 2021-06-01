@@ -57,7 +57,7 @@ nnoremap s= <C-w>=
 nnoremap sn gt
 nnoremap sp gT
 nnoremap st :tabnew<CR>
-nnoremap * *``
+nnoremap * :keepjumps normal! mi*`i<CR>
 
 runtime! settings/dim-inactive-panes.vim
 
