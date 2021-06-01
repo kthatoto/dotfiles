@@ -57,7 +57,7 @@ nnoremap s= <C-w>=
 nnoremap sn gt
 nnoremap sp gT
 nnoremap st :tabnew<CR>
-nnoremap * :keepjumps normal! mi*`i<CR>
+nnoremap <silent> * :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
 
 runtime! settings/dim-inactive-panes.vim
 
