@@ -87,7 +87,7 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 function _peco-history-exec() {
-  local l=$(history 1 | tail -r | ruby -e "while b=gets;puts b.split[1..-1].join(' ');end" | peco)
+  local l=$(history 1 | tail -r | $HOME/.anyenv/envs/rbenv/shims/ruby -e "while b=gets;puts b.split[1..-1].join(' ');end" | peco)
   BUFFER=$l
   CURSOR=9999
   zle redisplay
