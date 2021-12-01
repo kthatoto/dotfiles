@@ -59,7 +59,7 @@ nnoremap sp gT
 nnoremap st :tabnew<CR>
 
 " git関連
-cnoremap git Git
+" cnoremap git Git
 
 " *でカーソル下の単語検索をしても最初はカーソル移動させない
 nnoremap <silent> * :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
