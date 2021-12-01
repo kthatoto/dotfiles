@@ -1,17 +1,14 @@
 let g:NERDTreeShowBookmarks=1
 let g:NERDTreeShowHidden=1
-autocmd vimenter * NERDTree
+let g:NERDTreeIgnore=['node_modules']
+
 nnoremap <C-n> :NERDTreeFocus<CR>
 
-function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
-  exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
-  exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
-endfunction
+" vim起動時にNERDTreeを最初から表示(session指定じゃない時)
+autocmd VimEnter * if v:this_session == '' | NERDTree | wincmd p | endif
 
-call NERDTreeHighlightFile('md',     'blue',    'none', '#3366FF', '#151515')
-call NERDTreeHighlightFile('yml',    'yellow',  'none', 'yellow',  '#151515')
-call NERDTreeHighlightFile('json',   'yellow',  'none', 'yellow',  '#151515')
-call NERDTreeHighlightFile('html',   'yellow',  'none', 'yellow',  '#151515')
-call NERDTreeHighlightFile('css',    'cyan',    'none', 'cyan',    '#151515')
-call NERDTreeHighlightFile('rb',     'Red',     'none', 'red',     '#151515')
-call NERDTreeHighlightFile('js',     'Red',     'none', '#ffa500', '#151515')
+" TabにNERDTreeのwindowだけ残ってる場合Tabを閉じる
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" 全タブで同じNERDTreeの状態を共有
+autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
