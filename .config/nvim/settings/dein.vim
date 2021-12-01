@@ -37,6 +37,7 @@ if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
   call dein#add('sophacles/vim-processing')
   call dein#add('tpope/vim-surround')
   call dein#add('tpope/vim-fugitive')
+  call dein#add('airblade/vim-gitgutter')
 
   call dein#add('elixir-editors/vim-elixir')
   call dein#add('slim-template/vim-slim')
