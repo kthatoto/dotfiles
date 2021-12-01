@@ -45,7 +45,7 @@ set statusline+=[ENC=%{&fileencoding}]
 " terminalモードの設定
 tnoremap <Esc> <C-\><C-n>
 
-" split config
+" screen/split関連
 nnoremap vs :vsplit<CR>
 nnoremap ss :split<CR>
 nnoremap <C-h> <C-w>h
@@ -54,9 +54,13 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-c> <C-w>c
 nnoremap s= <C-w>=
+
+" tab関連
 nnoremap sn gt
 nnoremap sp gT
 nnoremap st :tabnew<CR>
+
+" *でカーソル下の単語検索をしても最初はカーソル移動させない
 nnoremap <silent> * :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
 
 runtime! settings/dim-inactive-panes.vim
