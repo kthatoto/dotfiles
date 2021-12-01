@@ -1,6 +1,7 @@
 let g:NERDTreeShowBookmarks=1
 let g:NERDTreeShowHidden=1
 let g:NERDTreeIgnore=['node_modules']
+let g:NERDTreeWinSize=40
 
 nnoremap <C-n> :NERDTreeFocus<CR>
 
