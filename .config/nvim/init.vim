@@ -6,7 +6,7 @@ runtime! settings/dein.vim
 autocmd FileType vue syntax sync fromstart
 runtime! filetypes/*.vim
 
-runtime! settings/plugins/*.vim
+exec ":normal <C-[>"
 
 syntax on
 colorscheme gruvbox
@@ -66,3 +66,5 @@ nnoremap <silent> * :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
 runtime! settings/dim-inactive-panes.vim
 
 runtime! settings/denite.vim
+
+runtime! settings/plugins/*.vim
