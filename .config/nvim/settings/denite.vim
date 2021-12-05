@@ -16,6 +16,13 @@ function! s:denite_filter_setting() abort
   nnoremap <silent><buffer><expr> <Esc>   denite#do_map('quit')
 endfunction
 
+set pumblend=30
+augroup transparent-windows
+  autocmd!
+  autocmd FileType denite set winblend=30
+  autocmd FileType denite-filter set winblend=30
+augroup END
+
 let s:denite_win_width_percent = 0.85
 let s:denite_win_height_percent = 0.3
 let s:denite_default_options = {
