@@ -24,17 +24,18 @@ augroup DimInactivePanes
   au WinLeave * set nocursorline
 augroup END
 
-" " Background colors for active vs inactive windows
-" hi ActiveWindow guibg=yellow
-" hi InactiveWindow guibg=blue
-"
-" " Call method on window enter
-" augroup WindowManagement
-"   autocmd!
-"   autocmd WinEnter * call Handle_Win_Enter()
-" augroup END
-"
-" " Change highlight group of active/inactive windows
-" function! Handle_Win_Enter()
-"   setlocal winhighlight=Normal:ActiveWindow,NormalNC:InactiveWindow
-" endfunction
+" Background colors for active vs inactive windows
+highlight ActiveWindow guibg=#0a0a0a
+highlight InactiveWindow guibg=#222222
+highlight ColorColumn guibg=#222222
+
+" Call method on window enter
+augroup WindowManagement
+  autocmd!
+  autocmd WinEnter,BufEnter * call Handle_Win_Enter()
+augroup END
+
+" Change highlight group of active/inactive windows
+function! Handle_Win_Enter()
+  setlocal winhighlight=Normal:ActiveWindow,NormalNC:InactiveWindow
+endfunction

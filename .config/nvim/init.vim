@@ -65,10 +65,8 @@ nnoremap st :tabnew<CR>
 " *でカーソル下の単語検索をしても最初はカーソル移動させない
 nnoremap <silent> * :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
 
-runtime! settings/plugins/*.vim
-
 runtime! settings/dim-inactive-panes.vim
-
+runtime! settings/plugins/*.vim
 runtime! settings/denite.vim
 
 exec ":normal <C-[><C-[>"
