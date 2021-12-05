@@ -9,6 +9,7 @@ runtime! filetypes/*.vim
 syntax on
 colorscheme gruvbox
 set background=dark
+set termguicolors
 
 set number
 " set relativenumber
