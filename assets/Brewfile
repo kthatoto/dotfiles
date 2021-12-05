@@ -16,6 +16,7 @@ brew "selenium-server-standalone"
 brew "chromedriver"
 brew "icr"
 brew "chrome-cli"
+brew "ripgrep"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
