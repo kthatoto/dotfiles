@@ -25,6 +25,9 @@ let s:denite_default_options = {
     \ 'winheight': float2nr(&lines * s:denite_win_height_percent),
     \ 'winrow': float2nr(&lines - ((&lines) * s:denite_win_height_percent) - 2),
     \ 'highlight_filter_background': 'DeniteFilter',
+    \ 'highlight_matched_char': 'None',
+    \ 'highlight_matched_range': 'Search',
+    \ 'match_highlight': v:true,
     \ 'prompt': '$ ',
     \ 'start_filter': v:true,
     \ }
@@ -33,3 +36,12 @@ let s:denite_default_options = {
 "   call add(s:denite_option_array, '-'.key.'='.value)
 " endfor
 call denite#custom#option('default', s:denite_default_options)
+
+if executable('rg')
+  call denite#custom#var('file/rec', 'command', [
+    \ 'rg',
+    \ '--files',
+    \ '--glob', '!.git',
+    \ '--glob', '!node_modules',
+    \ ])
+end
