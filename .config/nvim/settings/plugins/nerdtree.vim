@@ -30,11 +30,13 @@ function! s:HighlightNerdtreeTarget() abort
     if s:highlight_window > 0
       call nvim_win_close(s:highlight_window, v:true)
     endif
-    let l:empty_buf = nvim_create_buf(v:false, v:true)
-    let s:highlight_window = nvim_open_win(l:empty_buf, v:false, extend(s:target_window, { 'relative': 'editor' }))
-    highlight NERDTreeTargetFocus guifg=#000000 guibg=#770000
-    call nvim_win_set_option(s:highlight_window, 'winhighlight', 'Normal:NERDTreeTargetFocus')
-    call nvim_win_set_option(s:highlight_window, 'winblend', 60)
+    if winnr('$') > 1
+      let l:empty_buf = nvim_create_buf(v:false, v:true)
+      let s:highlight_window = nvim_open_win(l:empty_buf, v:false, extend(s:target_window, { 'relative': 'editor' }))
+      highlight NERDTreeTargetFocus guifg=#000000 guibg=#770000
+      call nvim_win_set_option(s:highlight_window, 'winhighlight', 'Normal:NERDTreeTargetFocus')
+      call nvim_win_set_option(s:highlight_window, 'winblend', 60)
+    endif
   else
     if s:highlight_window > 0
       call nvim_win_close(s:highlight_window, v:true)
