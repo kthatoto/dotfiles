@@ -16,7 +16,6 @@ function! s:denite_filter_setting() abort
   nnoremap <silent><buffer><expr> <Esc>   denite#do_map('quit')
 endfunction
 
-set pumblend=30
 augroup transparent-windows
   autocmd!
   autocmd FileType denite set winblend=30
@@ -31,17 +30,12 @@ let s:denite_default_options = {
     \ 'wincol': float2nr(&columns - (&columns * s:denite_win_width_percent)),
     \ 'winheight': float2nr(&lines * s:denite_win_height_percent),
     \ 'winrow': float2nr(&lines - ((&lines) * s:denite_win_height_percent) - 2),
-    \ 'highlight_filter_background': 'DeniteFilter',
     \ 'highlight_matched_char': 'None',
     \ 'highlight_matched_range': 'Search',
     \ 'match_highlight': v:true,
     \ 'prompt': '$ ',
     \ 'start_filter': v:true,
     \ }
-" let s:denite_option_array = []
-" for [key, value] in items(s:denite_default_options)
-"   call add(s:denite_option_array, '-'.key.'='.value)
-" endfor
 call denite#custom#option('default', s:denite_default_options)
 
 if executable('rg')
