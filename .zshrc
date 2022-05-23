@@ -66,6 +66,7 @@ alias de='docker compose exec'
 alias dr='docker compose run'
 alias drs='docker compose restart'
 alias dl='docker compose logs -f --tail=20'
+alias dd='docker compose down'
 alias be='bundle exec'
 alias brew-tree="brew deps --tree --installed"
 alias ww='cd $(ghq root)/$(ghq list | peco)'
