@@ -4,6 +4,8 @@ highlight CocErrorSign guifg=#ff0000
 highlight CocWarningSign guifg=#fabd2f
 highlight CocHintSign guifg=#15aabf
 
+nnoremap <silent> <space>h :<C-u>call CocActionAsync('doHover')<CR>
+
 function! ChoseAction(actions) abort
   echo join(map(copy(a:actions), { _, v -> v.text }), ", ") .. ": "
   let result = getcharstr()
