@@ -55,6 +55,8 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-c> <C-w>c
 nnoremap s= <C-w>=
+set splitbelow
+set splitright
 
 " tab関連
 nnoremap sn gt
@@ -70,5 +72,6 @@ nnoremap <silent> * :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
 runtime! settings/dim-inactive-panes.vim
 runtime! settings/plugins/*.vim
 runtime! settings/denite.vim
+runtime! settings/coc.vim
 
 exec ":normal <C-[><C-[>"
