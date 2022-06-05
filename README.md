@@ -48,6 +48,7 @@ $ pip install neovim // for denite.vim
 $ vi
 :call dein#update()
 :UpdateRemotePlugins
+:CocInstall coc-tsserver
 ```
 
 ## gcloud
