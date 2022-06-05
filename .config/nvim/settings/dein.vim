@@ -57,9 +57,10 @@ if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
   call dein#add('lervag/vimtex')
   call dein#add('thinca/vim-quickrun')
 
-  " call dein#add('twitvim/twitvim')
+  call dein#add('neoclide/coc.nvim', { 'rev': 'release' })
 
-  call dein#add('johngrib/vim-game-code-break')
+  " call dein#add('twitvim/twitvim')
+  " call dein#add('johngrib/vim-game-code-break')
 
   " You can specify revision/branch/tag.
   call dein#add('Shougo/vimshell', { 'rev': '3787e5' })
