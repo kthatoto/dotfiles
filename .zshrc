@@ -72,6 +72,7 @@ alias brew-tree="brew deps --tree --installed"
 alias ww='cd $(ghq root)/$(ghq list | peco)'
 alias ch='git switch $(git branch --format="%(refname:short)" | peco)'
 alias pugtohtml='npx @plaidev/pug-to-html'
+alias rails='de app rails'
 
 # for homebrew
 export PATH="/usr/local/bin:$PATH"
