@@ -73,6 +73,7 @@ alias ww='cd $(ghq root)/$(ghq list | peco)'
 alias ch='git switch $(git branch --format="%(refname:short)" | peco)'
 alias pugtohtml='npx @plaidev/pug-to-html'
 alias rails='de app rails'
+alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
 
 # for homebrew
 export PATH="/usr/local/bin:$PATH"
