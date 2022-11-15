@@ -34,8 +34,7 @@ cask "zoomus"
 cask "karabiner-elements"
 cask "postman"
 cask "keyboard-maestro"
-cask "dropbox"
-cask "notion"
+cask "chromium"
 
 brew "mas"
 mas "LINE", id: 443904275
