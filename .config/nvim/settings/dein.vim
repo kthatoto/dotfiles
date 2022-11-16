@@ -59,6 +59,8 @@ if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
 
   call dein#add('neoclide/coc.nvim', { 'rev': 'release' })
 
+  call dein#add('adamheins/vim-highlight-match-under-cursor')
+
   " call dein#add('twitvim/twitvim')
   " call dein#add('johngrib/vim-game-code-break')
 
