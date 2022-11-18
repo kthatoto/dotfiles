@@ -14,3 +14,5 @@
   p  = push
 [core]
   editor = nvim
+[init]
+	defaultBranch = main
