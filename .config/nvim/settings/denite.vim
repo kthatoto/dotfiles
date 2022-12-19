@@ -45,4 +45,7 @@ if executable('rg')
     \ '--glob', '!.git',
     \ '--glob', '!node_modules',
     \ ])
+  call denite#custom#var('grep', {
+    \ 'command': ['rg', '--glob', '!.git', '--glob', '!node_modules'],
+    \ })
 end
