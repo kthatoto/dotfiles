@@ -15,4 +15,10 @@
 [core]
   editor = nvim
 [init]
-	defaultBranch = main
+  defaultBranch = main
+[grep]
+  lineNumber = true
+[color "grep"]
+  match = bold red
+  lineNumber = bold white
+  filename = yellow
