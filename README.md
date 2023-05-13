@@ -49,6 +49,7 @@ $ vi
 :call dein#update()
 :UpdateRemotePlugins
 :CocInstall coc-tsserver
+:CocInstall coc-solargraph
 ```
 
 ## gcloud
