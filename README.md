@@ -49,7 +49,11 @@ $ vi
 :call dein#update()
 :UpdateRemotePlugins
 :CocInstall coc-tsserver
+
 :CocInstall coc-solargraph
+$ rbenv install <version>
+$ rbenv global <version>
+$ sudo gem install solargraph
 ```
 
 ## gcloud
