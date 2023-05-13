@@ -18,6 +18,7 @@ brew "icr"
 brew "chrome-cli"
 brew "ripgrep"
 brew "tree"
+brew "direnv"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
