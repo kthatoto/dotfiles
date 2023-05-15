@@ -34,6 +34,7 @@ set smartindent
 set clipboard=unnamed
 set ignorecase
 set smartcase
+set mouse=
 
 " statusline
 highlight StatusLine ctermbg=24 ctermfg=254 guibg=#004f87 guifg=#e4e4e4
