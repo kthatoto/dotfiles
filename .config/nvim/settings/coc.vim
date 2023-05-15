@@ -22,3 +22,4 @@ function! CocJumpAction() abort
   call CocActionAsync('jumpDefinition', action)
 endfunction
 nnoremap <silent> <C-f> :<C-u>call CocJumpAction()<CR>
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"

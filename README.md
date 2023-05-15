@@ -48,9 +48,12 @@ $ pip install neovim // for denite.vim
 $ vi
 :call dein#update()
 :UpdateRemotePlugins
-:CocInstall coc-tsserver
 
+:CocInstall coc-tsserver
+:CocInstall coc-json
+:CocInstall coc-pairs
 :CocInstall coc-solargraph
+
 $ rbenv install <version>
 $ rbenv global <version>
 $ sudo gem install solargraph
