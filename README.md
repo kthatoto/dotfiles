@@ -68,4 +68,7 @@ $ curl https://sdk.cloud.google.com | zsh
 ```
 // to display dotfiles on finder
 command + shift + .
+
+$ mkdir -p ~/assets/screenshots; defaults write com.apple.screencapture location ~/assets/screenshots
+$ defaults write com.apple.screencapture name "screenshot"
 ```
