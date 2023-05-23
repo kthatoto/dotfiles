@@ -79,6 +79,7 @@ alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
 
 # for homebrew
 export PATH="/usr/local/bin:$PATH"
+export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
 
 export PATH="$HOME/bin:$PATH"
 
