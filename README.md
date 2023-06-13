@@ -71,4 +71,5 @@ command + shift + .
 
 $ mkdir -p ~/assets/screenshots; defaults write com.apple.screencapture location ~/assets/screenshots
 $ defaults write com.apple.screencapture name "screenshot"
+$ defaults write -g ApplePressAndHoldEnabled -bool false
 ```
