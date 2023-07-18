@@ -53,6 +53,9 @@ $ vi
 :CocInstall coc-json
 :CocInstall coc-pairs
 :CocInstall coc-solargraph
+:CocInstall coc-prettier
+:CocInstall coc-eslint
+:CocInstall coc-vetur
 
 $ rbenv install <version>
 $ rbenv global <version>
