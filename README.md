@@ -49,13 +49,16 @@ $ vi
 :call dein#update()
 :UpdateRemotePlugins
 
+[required]
 :CocInstall coc-tsserver
 :CocInstall coc-json
 :CocInstall coc-pairs
 :CocInstall coc-solargraph
-:CocInstall coc-prettier
 :CocInstall coc-eslint
 :CocInstall coc-vetur
+
+[optional]
+:CocInstall coc-prettier
 
 $ rbenv install <version>
 $ rbenv global <version>
