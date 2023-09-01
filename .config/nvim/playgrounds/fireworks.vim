@@ -46,9 +46,14 @@ highlight FireworkYellow guibg=#FFF100
 highlight FireworkOrange guibg=#FFA500
 highlight FireworkBlue guibg=#0000FF
 highlight FireworkGreen guibg=#7CFC00
+highlight FireworkRed guibg=#FF0000
 let s:color_sets = [
     \   ['Normal:FireworkYellow', 'Normal:FireworkOrange'],
-    \   ['Normal:FireworkBlue', 'Normal:FireworkGreen'],
+    \   ['Normal:FireworkGreen', 'Normal:FireworkBlue'],
+    \   ['Normal:FireworkYellow', 'Normal:FireworkBlue'],
+    \   ['Normal:FireworkGreen', 'Normal:FireworkOrange'],
+    \   ['Normal:FireworkYellow', 'Normal:FireworkRed'],
+    \   ['Normal:FireworkGreen', 'Normal:FireworkRed'],
     \ ]
 
 function! s:FireworkFlash(x, y, color_name, ms) abort
