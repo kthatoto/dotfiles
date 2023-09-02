@@ -56,12 +56,12 @@ let s:color_sets = [
     \   ['Normal:FireworkGreen', 'Normal:FireworkRed'],
     \ ]
 
+let s:empty_buf = nvim_create_buf(v:false, v:true)
+let s:winconf = { 'width': 2, 'height': 1, 'relative': 'editor' }
 function! s:FireworkFlash(x, y, color_name, ms) abort
-  let l:empty_buf = nvim_create_buf(v:false, v:true)
-  let l:winconf = { 'width': 2, 'height': 1, 'relative': 'editor' }
   let l:firework_window_id = nvim_open_win(
-        \ l:empty_buf, v:true,
-        \ extend(l:winconf, { 'col': a:x, 'row': a:y })
+        \ s:empty_buf, v:true,
+        \ extend(s:winconf, { 'col': a:x, 'row': a:y })
         \ )
   call nvim_win_set_option(l:firework_window_id, 'winhighlight', a:color_name)
   call nvim_win_set_option(l:firework_window_id, 'winblend', 40)
