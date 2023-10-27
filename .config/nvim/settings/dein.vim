@@ -54,6 +54,10 @@ if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
   call dein#add('vim-crystal/vim-crystal')
   call dein#add('jparise/vim-graphql')
 
+  " binary edit
+  call dein#add('vim-denops/denops.vim')
+  call dein#add('Shougo/ddx.vim')
+
   call dein#add('lervag/vimtex')
   call dein#add('thinca/vim-quickrun')
 
