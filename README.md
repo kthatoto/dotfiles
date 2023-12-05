@@ -35,6 +35,9 @@ $ anyenv install pyenv
 ```
 $ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.13.1
 $ asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+$ asdf install ruby latest
+$ asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+$ asdf install nodejs latest
 ```
 
 ## Configure applications
@@ -64,8 +67,7 @@ $ vi
 [optional]
 :CocInstall coc-prettier
 
-$ rbenv install <version>
-$ rbenv global <version>
+$ asdf global ruby latest
 $ sudo gem install solargraph
 ```
 
