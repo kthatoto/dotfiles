@@ -32,6 +32,10 @@ $ anyenv install nodenv
 $ anyenv install rbenv
 $ anyenv install pyenv
 ```
+```
+$ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.13.1
+$ asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+```
 
 ## Configure applications
 * iTerm2
