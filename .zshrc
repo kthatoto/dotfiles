@@ -93,13 +93,12 @@ source "${HOME}/google-cloud-sdk/path.zsh.inc"
 # The next line enables shell command completion for gcloud.
 source "${HOME}/google-cloud-sdk/completion.zsh.inc"
 
-eval "$(anyenv init -)"
+# eval "$(anyenv init -)"
+# export GOROOT=`go env GOROOT`
+# export GOPATH=$HOME/go
+# export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 eval "$(direnv hook zsh)"
-
-export GOROOT=`go env GOROOT`
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 function _peco-history-exec() {
   local l=$(history 1 | tail -r | $HOME/.anyenv/envs/rbenv/shims/ruby -e "while b=gets;puts b.split[1..-1].join(' ');end" | peco)
