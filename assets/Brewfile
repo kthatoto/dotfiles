@@ -20,6 +20,7 @@ brew "ripgrep"
 brew "tree"
 brew "direnv"
 brew "ffmpeg"
+brew "watchman"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
