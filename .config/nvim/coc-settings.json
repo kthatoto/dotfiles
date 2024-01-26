@@ -7,7 +7,7 @@
       "args": ["tc", "--lsp", "--enable-all-experimental-lsp-features"],
       "filetypes": ["ruby"],
       "rootPatterns": [
-        "Gemfile"
+        "sorbet/config"
       ]
     }
   }
