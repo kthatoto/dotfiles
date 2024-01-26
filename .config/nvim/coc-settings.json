@@ -1,4 +1,14 @@
 {
   "typescript.suggest.autoImports": true,
-  "javascript.suggest.autoImports": true
+  "javascript.suggest.autoImports": true,
+  "languageserver": {
+    "sorbet": {
+      "command": "srb",
+      "args": ["tc", "--lsp", "--enable-all-experimental-lsp-features"],
+      "filetypes": ["ruby"],
+      "rootPatterns": [
+        "Gemfile"
+      ]
+    }
+  }
 }
