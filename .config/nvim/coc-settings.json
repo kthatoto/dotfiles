@@ -4,10 +4,12 @@
   "languageserver": {
     "sorbet": {
       "command": "srb",
-      "args": ["tc", "--lsp", "--enable-all-experimental-lsp-features"],
+      "args": ["tc", "--lsp"],
       "filetypes": ["ruby"],
       "rootPatterns": [
-        "sorbet/config"
+        "sorbet/config",
+        "Gemfile",
+        ".git"
       ]
     }
   }
