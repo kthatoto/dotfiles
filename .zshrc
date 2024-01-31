@@ -57,7 +57,6 @@ alias jjj='cd ../..'
 alias jjjj='cd ../../..'
 alias o='open .'
 alias ls='ls -alG'
-alias search-find='find . -type f -print | xargs grep'
 alias vi='nvim'
 alias docker-prune='docker system prune -f'
 alias db='docker compose build'
@@ -76,6 +75,10 @@ alias pugtohtml='npx @plaidev/pug-to-html'
 alias rails='de app rails'
 alias format='npm run format:only-changed'
 alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
+
+search-find() {
+  find . -type f -print | xargs grep $1 | awk 'length($0) < 500'
+}
 
 # for homebrew
 export PATH="/usr/local/bin:$PATH"
