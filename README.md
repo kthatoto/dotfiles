@@ -62,7 +62,7 @@ $ vi
 :CocInstall coc-pairs
 :CocInstall coc-solargraph
 :CocInstall coc-eslint
-:CocInstall coc-vetur
+:CocInstall @yaegassy/coc-volar
 
 [optional]
 :CocInstall coc-prettier
