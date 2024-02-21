@@ -104,7 +104,7 @@ source "${HOME}/google-cloud-sdk/completion.zsh.inc"
 eval "$(direnv hook zsh)"
 
 function _peco-history-exec() {
-  local l=$(history 1 | tail -r | $HOME/.anyenv/envs/rbenv/shims/ruby -e "while b=gets;puts b.split[1..-1].join(' ');end" | peco)
+  local l=$(history 1 | tail -r | $HOME/.asdf/shims/ruby -e "while b=gets;puts b.split[1..-1].join(' ');end" | peco)
   BUFFER=$l
   CURSOR=9999
   zle redisplay
