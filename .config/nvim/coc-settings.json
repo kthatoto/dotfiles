@@ -6,11 +6,10 @@
       "command": "srb",
       "args": ["tc", "--lsp"],
       "filetypes": ["ruby"],
-      "rootPatterns": [
-        "sorbet/config",
-        "Gemfile",
-        ".git"
-      ]
+      "rootPatterns": ["sorbet/config", "Gemfile", ".git"]
     }
-  }
+  },
+  "coc.preferences.formatOnSave": true,
+  "prettier.bracketSpacing": true,
+  "prettier.printWidth": 130
 }
