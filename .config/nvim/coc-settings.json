@@ -11,5 +11,5 @@
   },
   "coc.preferences.formatOnSave": true,
   "prettier.bracketSpacing": true,
-  "prettier.printWidth": 130
+  "prettier.printWidth": 110
 }
