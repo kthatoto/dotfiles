@@ -60,3 +60,4 @@ function! NERDTreeFocusOrBack() abort
   endif
 endfunction
 nnoremap <C-n> :call NERDTreeFocusOrBack()<CR>
+nnoremap <C-i> :NERDTreeFind<CR>
