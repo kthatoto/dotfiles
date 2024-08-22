@@ -75,6 +75,7 @@ alias pugtohtml='npx @plaidev/pug-to-html'
 alias rails='de app rails'
 alias format='npm run format:only-changed'
 alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
+alias rspec-cov='docker compose exec -e SIMPLE_COV_ENABLED=true app rspec'
 
 search-find() {
   find . -type f -print | xargs grep $1 | awk 'length($0) < 500'
