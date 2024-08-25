@@ -4,8 +4,8 @@
 [color]
   ui = true
 [alias]
-  graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
-  graph-n = log --graph --date-order --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
+  graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=format:'%Y-%m-%d %H:%M:%S'
+  graph-n = log --graph --date-order --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=format:'%Y-%m-%d %H:%M:%S'
 
   st = status
   cm = commit -m
