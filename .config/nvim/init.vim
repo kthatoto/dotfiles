@@ -74,6 +74,7 @@ runtime! settings/dim-inactive-panes.vim
 runtime! settings/plugins/*.vim
 runtime! settings/denite.vim
 runtime! settings/coc.vim
+runtime! settings/copilot.vim
 
 runtime! playgrounds/*.vim
 
