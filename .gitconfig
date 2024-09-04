@@ -11,7 +11,7 @@
   cm = commit -m
   ca = commit --amend
   ch = checkout
-  br = branch -v
+  br = !git-br
   cp = cherry-pick -n
   p  = push
 [core]
