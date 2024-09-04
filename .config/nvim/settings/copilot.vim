@@ -1,3 +1,3 @@
-inoremap <silent><C-g> copilot#Suggest()
-inoremap <silent><C-v> copilot#Next()
-inoremap <silent><C-b> copilot#Previous()
+inoremap <silent><expr> <C-g> copilot#Suggest()
+inoremap <silent><expr> <C-v> copilot#Next()
+inoremap <silent><expr> <C-b> copilot#Previous()
