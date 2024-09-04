@@ -76,6 +76,9 @@ alias rails='de app rails'
 alias format='npm run format:only-changed'
 alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
 alias rspec-cov='docker compose exec -e SIMPLE_COV_ENABLED=true app rspec'
+alias rspec='docker compose exec app rspec'
+alias cop='docker compose exec app rubocop'
+alias br-edit='git branch --edit-description'
 
 search-find() {
   find . -type f -print | xargs grep $1 | awk 'length($0) < 500'
