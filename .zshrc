@@ -118,3 +118,35 @@ if [ -f '/Users/kthatoto/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/kthato
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/kthatoto/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/kthatoto/google-cloud-sdk/completion.zsh.inc'; fi
+
+function br {
+  local max=0
+  for line in $(git branch); do
+    # 最長のブランチ名の長さ数値を取得
+    if [[ $line != "*" ]]; then
+      if [[ $max -lt ${#line} ]]; then
+        max=${#line}
+      fi
+    fi
+  done
+
+  current_branch=$(git branch | grep \* | cut -d ' ' -f2)
+  for line in $(git branch); do
+    if [[ $line == "*" ]]; then
+      continue
+    else
+      if [[ $line == $current_branch ]]; then
+        echo -n "* "
+        echo -n "\e[32m$line\e[0m"
+      else
+        echo -n "  "
+        echo -n $line
+      fi
+      for i in $(seq $((${#line} - 1)) $max); do
+        echo -n " "
+      done
+      description=$(git config branch.$line.description)
+      echo "$description"
+    fi
+  done
+}
