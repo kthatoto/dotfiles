@@ -122,7 +122,6 @@ if [ -f '/Users/kthatoto/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/
 function br {
   local max=0
   for line in $(git branch); do
-    # 最長のブランチ名の長さ数値を取得
     if [[ $line != "*" ]]; then
       if [[ $max -lt ${#line} ]]; then
         max=${#line}
