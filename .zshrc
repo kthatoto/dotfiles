@@ -83,7 +83,7 @@ alias br-edit='git branch --edit-description'
 rubocop-only-changed() {
   git diff --name-only develop | grep "\.rb$"
   echo
-  docker compose exec -T app rubocop --color $(git diff --name-only develop | grep "\.rb$")
+  docker compose exec -T app rubocop --color $(git diff --name-only develop | grep "\.rb$") $@
 }
 
 rspec-only-changed() {
