@@ -135,6 +135,11 @@ if [ -f '/Users/kthatoto/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/kthato
 if [ -f '/Users/kthatoto/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/kthatoto/google-cloud-sdk/completion.zsh.inc'; fi
 
 function git-br {
+  if [ $# -ne 0 ]; then
+    git branch $@
+    return
+  fi
+
   local max=0
   for line in $(git branch); do
     if [[ $line != "*" ]]; then
