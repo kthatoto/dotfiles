@@ -76,9 +76,21 @@ alias rails='de app rails'
 alias format='npm run format:only-changed'
 alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
 alias rspec-cov='docker compose exec -e SIMPLE_COV_ENABLED=true app rspec'
-alias cop='docker compose exec -T app rubocop --color $(git diff --name-only develop | grep "\.rb$")'
-alias rspec='docker compose exec -T app rspec --color $(git diff --name-only develop | grep "_spec\.rb$")'
+alias cop='rubocop-only-changed'
+alias rp='rspec-only-changed'
 alias br-edit='git branch --edit-description'
+
+rubocop-only-changed() {
+  git diff --name-only develop | grep "\.rb$"
+  echo
+  docker compose exec -T app rubocop --color $(git diff --name-only develop | grep "\.rb$")
+}
+
+rspec-only-changed() {
+  git diff --name-only develop | grep "_spec\.rb$"
+  echo
+  docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $(git diff --name-only develop | grep '_spec\.rb$' | tr '\n' ' ')"
+}
 
 search-find() {
   find . -type f -print | xargs grep $1 | awk 'length($0) < 500'
