@@ -11,7 +11,7 @@
   cm = commit -m
   ca = commit --amend
   ch = checkout
-  br = "!f() { zsh -i -c 'git-br \"$@\"' -- \"$@\"; }; f"
+  br = !~/dotfiles/scripts/git-br.sh
   br-edit = branch --edit-description
   cp = cherry-pick -n
   p  = push

@@ -51,7 +51,6 @@ setopt no_beep # ビープ音を無効
 setopt ignore_eof # Ctrl+Dで終了しない
 setopt interactive_comments # '#'以降をコマンドとして扱う
 
-alias cdd='cd ~/Desktop'
 alias jj='cd ..'
 alias jjj='cd ../..'
 alias jjjj='cd ../../..'
@@ -71,7 +70,6 @@ alias brew-tree="brew deps --tree --installed"
 alias ww='cd $(ghq root)/$(ghq list | peco)'
 alias ch='git switch $(git branch --format="%(refname:short)" | peco)'
 alias gg='git grep --heading'
-alias pugtohtml='npx @plaidev/pug-to-html'
 alias rails='de app rails'
 alias format='npm run format:only-changed'
 alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
@@ -173,4 +171,3 @@ _git_br() {
   branches=(${(f)"$(git branch --format='%(refname:short)')"})
   compadd "${branches[@]}"
 }
-compdef _git_br git-br
