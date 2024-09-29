@@ -68,7 +68,7 @@ alias dd='docker compose down'
 alias be='bundle exec'
 alias brew-tree="brew deps --tree --installed"
 alias ww='cd $(ghq root)/$(ghq list | peco)'
-alias ch='git switch $(git branch --format="%(refname:short)" | peco)'
+alias ch='git switch $(git-br-list | peco | awk "{print \$1}")'
 alias gg='git grep --heading'
 alias rails='de app rails'
 alias format='npm run format:only-changed'
@@ -87,6 +87,35 @@ rspec-only-changed() {
   git diff --name-only develop | grep "_spec\.rb$"
   echo
   docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $(git diff --name-only develop | grep '_spec\.rb$' | tr '\n' ' ')"
+}
+git-br-list() {
+  branches=($(git branch --format='%(refname:short)'))
+  local max=0
+  for line in "${branches[@]}"; do
+    if [[ $line != "*" ]]; then
+      if [[ $max -lt ${#line} ]]; then
+        max=${#line}
+      fi
+    fi
+  done
+
+  sorted_branches=($(for branch in "${branches[@]}"; do
+    description=$(git config branch."$branch".description 2>/dev/null)
+    echo "$description $branch"
+  done | sort | awk '{print $NF}'))
+
+  for line in "${sorted_branches[@]}"; do
+    if [[ $line == "*" ]]; then
+      continue
+    else
+      echo -n $line
+      for i in $(seq $((${#line} - 1)) $max); do
+        echo -n " "
+      done
+      description=$(git config branch.$line.description)
+      echo "$description"
+    fi
+  done
 }
 
 search-find() {
@@ -131,48 +160,7 @@ if [ -f '/Users/kthatoto/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/kthato
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/kthatoto/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/kthatoto/google-cloud-sdk/completion.zsh.inc'; fi
 
-function git-br {
-  if [ $# -ne 0 ]; then
-    git branch $@
-    return
-  fi
-
-  local max=0
-  for line in $(git branch); do
-    if [[ $line != "*" ]]; then
-      if [[ $max -lt ${#line} ]]; then
-        max=${#line}
-      fi
-    fi
-  done
-
-  branches=($(git branch --format='%(refname:short)' | while read branch; do
-    description=$(git config branch."$branch".description 2>/dev/null)
-    echo "$description $branch"
-  done | sort | awk '{print $NF}'))
-
-  current_branch=$(git branch | grep \* | cut -d ' ' -f2)
-  for line in "${branches[@]}"; do
-    if [[ $line == "*" ]]; then
-      continue
-    else
-      if [[ $line == $current_branch ]]; then
-        echo -n "* "
-        echo -n "\e[32m$line\e[0m"
-      else
-        echo -n "  "
-        echo -n $line
-      fi
-      for i in $(seq $((${#line} - 1)) $max); do
-        echo -n " "
-      done
-      description=$(git config branch.$line.description)
-      echo "$description"
-    fi
-  done
-}
 _git_br() {
-  local branches
   branches=(${(f)"$(git branch --format='%(refname:short)')"})
   compadd "${branches[@]}"
 }

@@ -5,8 +5,11 @@ if [ $# -ne 0 ]; then
   return
 fi
 
+branches=($(git branch --format='%(refname:short)'))
+current_branch=$(git branch --contains | awk '{print $2}')
+
 local max=0
-for line in $(git branch); do
+for line in "${branches[@]}"; do
   if [[ $line != "*" ]]; then
     if [[ $max -lt ${#line} ]]; then
       max=${#line}
@@ -14,13 +17,12 @@ for line in $(git branch); do
   fi
 done
 
-branches=($(git branch --format='%(refname:short)' | while read branch; do
+sorted_branches=($(for branch in "${branches[@]}"; do
   description=$(git config branch."$branch".description 2>/dev/null)
   echo "$description $branch"
 done | sort | awk '{print $NF}'))
 
-current_branch=$(git branch | grep \* | cut -d ' ' -f2)
-for line in "${branches[@]}"; do
+for line in "${sorted_branches[@]}"; do
   if [[ $line == "*" ]]; then
     continue
   else
