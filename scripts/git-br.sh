@@ -10,6 +10,7 @@ local current_branch=$(git branch --contains | awk '{print $2}')
 
 local count_length_max=0
 local branch_length_max=0
+local develop_not_merged_exists=false
 for line in "${branches[@]}"; do
   local count_length=0
   if git rev-parse --verify --quiet origin/$line > /dev/null; then
@@ -23,6 +24,11 @@ for line in "${branches[@]}"; do
 
   if [[ $branch_length_max -lt ${#line} ]]; then
     branch_length_max=${#line}
+  fi
+
+  local develop_merged=$(git branch --merged $line | awk '{print $1}' | grep '^develop$')
+  if [[ -z "$develop_exists" ]]; then
+    develop_not_merged_exists=true
   fi
 done
 
@@ -57,6 +63,14 @@ for line in "${sorted_branches[@]}"; do
     echo -n "    "
   fi
 
+  if [[ -n "$develop_not_merged_exists" ]]; then
+    local develop_merged=$(git branch --merged $line | awk '{print $1}' | grep '^develop$')
+    if [[ -z "$develop_merged" ]]; then
+      echo -n "\e[31m•\e[0m "
+    else
+      echo -n "  "
+    fi
+  fi
 
   if [[ $line == $current_branch ]]; then
     echo -n "\e[32m$line\e[0m"
