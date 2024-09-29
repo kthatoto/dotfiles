@@ -68,7 +68,7 @@ alias dd='docker compose down'
 alias be='bundle exec'
 alias brew-tree="brew deps --tree --installed"
 alias ww='cd $(ghq root)/$(ghq list | peco)'
-alias ch='git switch $(git-br-list | peco | awk "{print \$1}")'
+alias ch='git switch $(git-br-list | peco | sed "s/^\* //" | awk "{print \$1}")'
 alias gg='git grep --heading'
 alias rails='de app rails'
 alias format='npm run format:only-changed'
@@ -89,32 +89,31 @@ rspec-only-changed() {
   docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $(git diff --name-only develop | grep '_spec\.rb$' | tr '\n' ' ')"
 }
 git-br-list() {
-  branches=($(git branch --format='%(refname:short)'))
+  local branches=($(git branch --format='%(refname:short)'))
+  local current_branch=$(git branch --contains | awk '{print $2}')
   local max=0
   for line in "${branches[@]}"; do
-    if [[ $line != "*" ]]; then
-      if [[ $max -lt ${#line} ]]; then
-        max=${#line}
-      fi
+    if [[ $max -lt ${#line} ]]; then
+      max=${#line}
     fi
   done
 
-  sorted_branches=($(for branch in "${branches[@]}"; do
+  local sorted_branches=($(for branch in "${branches[@]}"; do
     description=$(git config branch."$branch".description 2>/dev/null)
     echo "$description $branch"
   done | sort | awk '{print $NF}'))
 
   for line in "${sorted_branches[@]}"; do
-    if [[ $line == "*" ]]; then
-      continue
+    if [[ $line == $current_branch ]]; then
+      echo -n "* "
     else
-      echo -n $line
-      for i in $(seq $((${#line} - 1)) $max); do
-        echo -n " "
-      done
-      description=$(git config branch.$line.description)
-      echo "$description"
+      echo -n "  "
     fi
+    echo -n $line
+    for i in $(seq $((${#line} - 1)) $max); do
+      echo -n " "
+    done
+    echo $(git config branch.$line.description)
   done
 }
 
