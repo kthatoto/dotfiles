@@ -116,6 +116,22 @@ git-br-list() {
     echo $(git config branch.$line.description)
   done
 }
+git-test() {
+  # local branches=($(git branch --format='%(refname:short)'))
+  # local current_branch=$(git branch --contains | awk '{print $2}')
+  #
+  # for line in "${branches[@]}"; do
+  #   local count=0
+  #   if git rev-parse --verify --quiet origin/$line > /dev/null; then
+  #     count=$(git rev-list --count origin/$line..$line)
+  #   fi
+  #   echo "$count $line"
+  # done
+  local count=111
+  local count_length=$((${#count} + 2))
+
+  echo $count_length
+}
 
 search-find() {
   find . -type f -print | xargs grep $1 | awk 'length($0) < 500'
