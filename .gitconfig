@@ -12,6 +12,7 @@
   ca = commit --amend
   ch = checkout
   br = "!f() { zsh -i -c 'git-br \"$@\"' -- \"$@\"; }; f"
+  br-edit = branch --edit-description
   cp = cherry-pick -n
   p  = push
 [core]

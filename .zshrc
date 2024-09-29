@@ -78,7 +78,6 @@ alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
 alias rspec-cov='docker compose exec -e SIMPLE_COV_ENABLED=true app rspec'
 alias cop='rubocop-only-changed'
 alias rp='rspec-only-changed'
-alias br-edit='git branch --edit-description'
 
 rubocop-only-changed() {
   git diff --name-only develop | grep "\.rb$"
@@ -169,3 +168,9 @@ function git-br {
     fi
   done
 }
+_git_br() {
+  local branches
+  branches=(${(f)"$(git branch --format='%(refname:short)')"})
+  compadd "${branches[@]}"
+}
+compdef _git_br git-br
