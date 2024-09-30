@@ -6,7 +6,7 @@ if [ $# -ne 0 ]; then
 fi
 
 local branches=($(git branch --format='%(refname:short)'))
-local current_branch=$(git branch --contains | awk '{print $2}')
+local current_branch=$(git branch --contains | grep '*' | awk '{print $2}')
 
 local count_length_max=0
 local branch_length_max=0
@@ -64,8 +64,13 @@ for line in "${sorted_branches[@]}"; do
   fi
 
   if [[ -n "$develop_not_merged_exists" ]]; then
+    local merged_to_develop=$(git branch --contains $line | awk '{print $1}' | grep '^develop$')
     local develop_merged=$(git branch --merged $line | awk '{print $1}' | grep '^develop$')
-    if [[ -z "$develop_merged" ]]; then
+    if [ $line = "develop" ]; then
+      echo -n "  "
+    elif [[ -n "$merged_to_develop" ]]; then
+      echo -n "\e[32m•\e[0m "
+    elif [[ -z "$develop_merged" ]]; then
       echo -n "\e[31m•\e[0m "
     else
       echo -n "  "
