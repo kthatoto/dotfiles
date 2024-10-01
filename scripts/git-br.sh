@@ -53,7 +53,9 @@ for line in "${sorted_branches[@]}"; do
   for i in $(seq $((${#count} + 2)) $count_length_max); do
     echo -n " "
   done
-  if [[ $count_length -gt 0 ]]; then
+  if [ $line = "develop" ]; then
+    echo -n "\e[30m[0]\e[0m "
+  elif [[ $count_length -gt 0 ]]; then
     if [[ $count -eq 0 ]]; then
       echo -n "[$count] "
     else
