@@ -85,7 +85,7 @@ rspec-select() {
   local file="$1"
   if [[ -z "$file" ]]; then
     local selected_history
-    selected_history=$(history | grep 'rss ' | fzf --bind "j:down,k:up" --no-sort --layout=reverse-list)
+    selected_history=$(history 1 | grep 'rss ' | fzf --bind "j:down,k:up" --no-sort --layout=reverse-list)
     if [[ -z "$selected_history" ]]; then
       echo "No selection made."
       return 1
