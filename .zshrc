@@ -40,13 +40,6 @@ zshaddhistory() {
   ]]
 }
 
-hey() {
-  local line=${1%%$'\n'}
-  local cmd=${line%% *}
-  echo $line
-  echo $cmd
-}
-
 setopt no_beep # ビープ音を無効
 setopt ignore_eof # Ctrl+Dで終了しない
 setopt interactive_comments # '#'以降をコマンドとして扱う
@@ -76,18 +69,51 @@ alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
 alias rspec-cov='docker compose exec -e SIMPLE_COV_ENABLED=true app rspec'
 alias cop='rubocop-only-changed'
 alias rp='rspec-only-changed'
+alias rss='rspec-select'
 
 rubocop-only-changed() {
   git diff --name-only develop | grep "\.rb$"
   echo
   docker compose exec -T app rubocop --color $(git diff --name-only develop | grep "\.rb$") $@
 }
-
 rspec-only-changed() {
   git diff --name-only develop | grep "_spec\.rb$"
   echo
   docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $(git diff --name-only develop | grep '_spec\.rb$' | tr '\n' ' ')"
 }
+rspec-select() {
+  local file="$1"
+  if [[ -z "$file" ]]; then
+    local selected_history
+    selected_history=$(history | grep 'rss ' | fzf --bind "j:down,k:up" --no-sort --layout=reverse-list)
+    if [[ -z "$selected_history" ]]; then
+      echo "No selection made."
+      return 1
+    fi
+    local command
+    command=$(echo "$selected_history" | sed 's/^[ 0-9]*//')  # Remove line numbers from history
+    eval "$command"
+    return
+  fi
+
+  if [[ ! -f "$file" ]]; then
+    echo "File not found: $file"
+    return 1
+  fi
+
+  local selected
+  selected=$(grep -n -E '^\s*(describe|context)' "$file" | fzf --bind "j:down,k:up" --no-sort --layout=reverse-list)
+  if [[ -z "$selected" ]]; then
+    echo "No selection made."
+    return 1
+  fi
+  local line_number
+  line_number=$(echo "$selected" | cut -d: -f1)
+  echo $file:$line_number
+  echo $selected
+  docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $file:$line_number"
+}
+
 git-br-list() {
   local branches=($(git branch --format='%(refname:short)'))
   local current_branch=$(git branch --contains | awk '{print $2}')
@@ -116,23 +142,6 @@ git-br-list() {
     echo $(git config branch.$line.description)
   done
 }
-git-test() {
-  # local branches=($(git branch --format='%(refname:short)'))
-  # local current_branch=$(git branch --contains | awk '{print $2}')
-  #
-  # for line in "${branches[@]}"; do
-  #   local count=0
-  #   if git rev-parse --verify --quiet origin/$line > /dev/null; then
-  #     count=$(git rev-list --count origin/$line..$line)
-  #   fi
-  #   echo "$count $line"
-  # done
-  local count=111
-  local count_length=$((${#count} + 2))
-
-  echo $count_length
-}
-
 search-find() {
   find . -type f -print | xargs grep $1 | awk 'length($0) < 500'
 }

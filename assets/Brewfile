@@ -21,6 +21,7 @@ brew "tree"
 brew "direnv"
 brew "ffmpeg"
 brew "watchman"
+brew "fzf"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
