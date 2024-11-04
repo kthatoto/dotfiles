@@ -109,7 +109,8 @@ rspec-select() {
   fi
 
   if [[ "$selected" == "File: $file" ]]; then
-    rspec "$file"
+    echo "File: $file"
+    docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $file"
     return
   fi
 
