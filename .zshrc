@@ -82,7 +82,7 @@ rspec-only-changed() {
   docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $(git diff --name-only develop | grep '_spec\.rb$' | tr '\n' ' ')"
 }
 rspec-select() {
-  local fzf_bind="j:down,k:up,ctrl-d:half-page-down,ctrl-u:half-page-up,shift-g:bottom"
+  local fzf_bind="j:down,k:up,ctrl-d:half-page-down,ctrl-u:half-page-up,g:first,G:last"
   local file="$1"
   if [[ -z "$file" ]]; then
     local selected_history
