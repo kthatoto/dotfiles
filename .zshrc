@@ -82,10 +82,11 @@ rspec-only-changed() {
   docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $(git diff --name-only develop | grep '_spec\.rb$' | tr '\n' ' ')"
 }
 rspec-select() {
+  local fzf_bind="j:down,k:up,ctrl-d:half-page-down,ctrl-u:half-page-up,shift-g:bottom"
   local file="$1"
   if [[ -z "$file" ]]; then
     local selected_history
-    selected_history=$(history 1 | grep 'rss ' | fzf --bind "j:down,k:up" --no-sort --layout=reverse-list)
+    selected_history=$(history 1 | grep 'rss ' | fzf --bind "$fzf_bind" --no-sort --layout=reverse-list)
     if [[ -z "$selected_history" ]]; then
       echo "No selection made."
       return 1
@@ -102,7 +103,7 @@ rspec-select() {
   fi
 
   local selected
-  selected=$( (echo "File: $file"; grep -n -E '^\s*(describe|context)' "$file") | fzf --bind "j:down,k:up" --no-sort --layout=reverse-list)
+  selected=$( (echo "File: $file"; grep -n -E '^\s*(describe|context)' "$file") | fzf --bind "$fzf_bind" --no-sort --layout=reverse-list)
   if [[ -z "$selected" ]]; then
     echo "No selection made."
     return 1
