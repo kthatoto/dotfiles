@@ -102,11 +102,17 @@ rspec-select() {
   fi
 
   local selected
-  selected=$(grep -n -E '^\s*(describe|context)' "$file" | fzf --bind "j:down,k:up" --no-sort --layout=reverse-list)
+  selected=$( (echo "File: $file"; grep -n -E '^\s*(describe|context)' "$file") | fzf --bind "j:down,k:up" --no-sort --layout=reverse-list)
   if [[ -z "$selected" ]]; then
     echo "No selection made."
     return 1
   fi
+
+  if [[ "$selected" == "File: $file" ]]; then
+    rspec "$file"
+    return
+  fi
+
   local line_number
   line_number=$(echo "$selected" | cut -d: -f1)
   echo $file:$line_number
