@@ -82,7 +82,6 @@ rspec-fzf() {
   local file="$1"
   if [[ -n "$file" ]]; then
     de app rspec "$file"
-    history -s "rspec $file"
     return
   fi
   local selected=$(find spec | fzf --layout=reverse-list)
@@ -91,7 +90,6 @@ rspec-fzf() {
     return 1
   fi
   echo "rspec $selected"
-  history -s "rspec $file"
   de app rspec "$selected"
 }
 rspec-only-changed() {
@@ -111,7 +109,6 @@ rspec-select() {
     fi
     local command
     command=$(echo "$selected_history" | sed 's/^[ 0-9]*//')  # Remove line numbers from history
-    history -s "$command"
     eval "$command"
     return
   fi
@@ -130,7 +127,6 @@ rspec-select() {
 
   if [[ "$selected" == "File: $file" ]]; then
     echo "File: $file"
-    history -s "rspec $file"
     docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $file"
     return
   fi
@@ -139,7 +135,6 @@ rspec-select() {
   line_number=$(echo "$selected" | cut -d: -f1)
   echo $file:$line_number
   echo $selected
-  history -s "rspec $file:$line_number"
   docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $file:$line_number"
 }
 rspec-select-interactive() {
