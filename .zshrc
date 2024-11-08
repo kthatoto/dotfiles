@@ -70,6 +70,7 @@ alias rspec-cov='docker compose exec -e SIMPLE_COV_ENABLED=true app rspec'
 alias cop='rubocop-only-changed'
 alias rp='rspec-only-changed'
 alias rss='rspec-select'
+alias rpss='rspec-select-interactive'
 
 rubocop-only-changed() {
   git diff --name-only develop | grep "\.rb$"
@@ -120,6 +121,9 @@ rspec-select() {
   echo $file:$line_number
   echo $selected
   docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $file:$line_number"
+}
+rspec-select-interactive() {
+  rspec-select $(find spec -type f | fzf --no-sort --layout=reverse-list)
 }
 
 git-br-list() {
