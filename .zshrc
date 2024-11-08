@@ -68,6 +68,7 @@ alias format='npm run format:only-changed'
 alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
 alias rspec-cov='docker compose exec -e SIMPLE_COV_ENABLED=true app rspec'
 alias cop='rubocop-only-changed'
+alias rspec='rspec-fzf'
 alias rp='rspec-only-changed'
 alias rss='rspec-select'
 alias rpss='rspec-select-interactive'
@@ -76,6 +77,20 @@ rubocop-only-changed() {
   git diff --name-only develop | grep "\.rb$"
   echo
   docker compose exec -T app rubocop --color $(git diff --name-only develop | grep "\.rb$") $@
+}
+rspec-fzf() {
+  local file="$1"
+  if [[ -n "$file" ]]; then
+    de app rspec "$file"
+    return
+  fi
+  local selected=$(find spec | fzf --layout=reverse-list)
+  if [[ -z "$selected" ]]; then
+    echo "No selection made."
+    return 1
+  fi
+  echo "rspec $selected"
+  de app rspec "$selected"
 }
 rspec-only-changed() {
   git diff --name-only develop | grep "_spec\.rb$"
@@ -123,7 +138,7 @@ rspec-select() {
   docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $file:$line_number"
 }
 rspec-select-interactive() {
-  rspec-select $(find spec -type f | fzf --no-sort --layout=reverse-list)
+  rspec-select $(find spec -type f | fzf --layout=reverse-list)
 }
 
 git-br-list() {
