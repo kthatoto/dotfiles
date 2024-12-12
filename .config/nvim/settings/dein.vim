@@ -53,6 +53,7 @@ if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
   call dein#add('Shougo/vinarise.vim')
   call dein#add('vim-crystal/vim-crystal')
   call dein#add('jparise/vim-graphql')
+  call dein#add('chrisbra/csv.vim')
 
   call dein#add('lervag/vimtex')
   call dein#add('thinca/vim-quickrun')
