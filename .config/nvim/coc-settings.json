@@ -7,6 +7,12 @@
       "args": ["tc", "--lsp"],
       "filetypes": ["ruby"],
       "rootPatterns": ["sorbet/config", "Gemfile", ".git"]
+    },
+    "typespec": {
+      "command": "tsp-server",
+      "args": ["--stdio"],
+      "filetypes": ["typespec"],
+      "rootPatterns": ["tspconfig.yaml", ".git"]
     }
   },
   "coc.preferences.formatOnSave": true,

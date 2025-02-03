@@ -216,3 +216,5 @@ _git_br() {
   branches=(${(f)"$(git branch --format='%(refname:short)')"})
   compadd "${branches[@]}"
 }
+
+export PATH="$PATH:$HOME/.bun/bin"
