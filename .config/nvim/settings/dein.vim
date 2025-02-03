@@ -54,6 +54,7 @@ if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
   call dein#add('vim-crystal/vim-crystal')
   call dein#add('jparise/vim-graphql')
   call dein#add('chrisbra/csv.vim')
+  call dein#add('nvim-treesitter/nvim-treesitter', { 'hook_post_update': 'TSUpdate' })
 
   call dein#add('lervag/vimtex')
   call dein#add('thinca/vim-quickrun')
