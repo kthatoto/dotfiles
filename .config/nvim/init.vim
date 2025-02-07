@@ -37,8 +37,6 @@ set smartcase
 set mouse=
 
 " statusline
-highlight StatusLine ctermbg=24 ctermfg=254 guibg=#004f87 guifg=#e4e4e4
-highlight StatusLineNC ctermbg=252 ctermfg=238 guibg=#d0d0d0 guifg=#444444
 set statusline=%F\ %m
 set statusline+=%= "これ以降は右寄せ
 set statusline+=[%l/%L]
@@ -70,6 +68,7 @@ nnoremap st :tabnew<CR>
 " *でカーソル下の単語検索をしても最初はカーソル移動させない
 nnoremap <silent> * :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
 
+runtime! colors/highlight.vim
 runtime! settings/dim-inactive-panes.vim
 runtime! settings/plugins/*.vim
 runtime! settings/denite.vim
