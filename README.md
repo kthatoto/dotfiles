@@ -30,14 +30,6 @@ $ ln -s ~/dotfiles/.gitconfig ~/.gitconfig
 ## Install langs
 
 ```
-$ anyenv install --init
-$ anyenv install goenv
-$ anyenv install nodenv
-$ anyenv install rbenv
-$ anyenv install pyenv
-```
-
-```
 $ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.13.1
 $ asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
 $ asdf install ruby latest
@@ -45,6 +37,8 @@ $ asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
 $ asdf install nodejs latest
 $ asdf plugin add bun
 $ asdf install bun 1.0.17
+$ asdf plugin add python
+$ asdf install python latest
 ```
 
 ## Configure applications
@@ -58,8 +52,6 @@ $ asdf install bun 1.0.17
 ```
 $ cd ~/dotfiles/.config/nvim/dein
 $ ./dein_installer.sh .
-$ pyenv install <version>
-$ pyenv global <version>
 $ pip install neovim // for denite.vim
 $ vi
 :call dein#update()
