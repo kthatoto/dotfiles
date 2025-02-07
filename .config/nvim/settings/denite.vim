@@ -1,4 +1,4 @@
-let g:python3_host_prog = expand('/Users/kthatoto/.anyenv/envs/pyenv/shims/python')
+let g:python3_host_prog = expand('/Users/kthatoto/.asdf/installs/python/3.13.2/bin/python')
 nnoremap <silent> <C-t> :<C-u>Denite file/rec<CR>
 nnoremap <silent> <C-b> :<C-u>Denite file_mru<CR>
 nnoremap <silent> <C-g> :<C-u>Denite grep<CR>
