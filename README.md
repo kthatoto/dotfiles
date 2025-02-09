@@ -66,6 +66,7 @@ $ vi
 :CocInstall coc-solargraph
 :CocInstall coc-eslint
 :CocInstall @yaegassy/coc-volar
+:CocInstall @yaegassy/coc-tailwindcss3
 
 [optional]
 :CocInstall coc-prettier

@@ -65,8 +65,6 @@ if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
   " You can specify revision/branch/tag.
   call dein#add('Shougo/vimshell', { 'rev': '3787e5' })
 
-  call dein#add("luckasRanarison/tailwind-tools.nvim")
-
   " Required:
   call dein#end()
   call dein#save_state()

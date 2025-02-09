@@ -17,5 +17,13 @@
   },
   "coc.preferences.formatOnSave": true,
   "prettier.bracketSpacing": true,
-  "prettier.printWidth": 110
+  "prettier.printWidth": 110,
+
+  "tailwindCSS.enable": true,
+  "tailwindCSS.includeLanguages": {
+    "vue": "html",
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  },
+  "tailwindCSS.emmetCompletions": true
 }
