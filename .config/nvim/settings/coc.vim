@@ -1,5 +1,3 @@
-highlight CocFloating guibg=#000000
-
 highlight CocErrorSign guifg=#ff0000
 highlight CocWarningSign guifg=#fabd2f
 highlight CocHintSign guifg=#15aabf

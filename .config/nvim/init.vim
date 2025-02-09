@@ -74,6 +74,7 @@ runtime! settings/plugins/*.vim
 runtime! settings/denite.vim
 runtime! settings/coc.vim
 runtime! settings/copilot.vim
+runtime! settings/focus-win.vim
 
 runtime! playgrounds/*.vim
 
