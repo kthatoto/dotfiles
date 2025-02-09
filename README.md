@@ -31,13 +31,15 @@ $ ln -s ~/dotfiles/.gitconfig ~/.gitconfig
 
 ```
 $ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.13.1
+
 $ asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-$ asdf install ruby latest
 $ asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-$ asdf install nodejs latest
 $ asdf plugin add bun
-$ asdf install bun 1.0.17
 $ asdf plugin add python
+
+$ asdf install ruby latest
+$ asdf install nodejs latest
+$ asdf install bun 1.0.17
 $ asdf install python latest
 ```
 
@@ -69,9 +71,9 @@ $ vi
 :CocInstall coc-prettier
 :TSInstall typespec
 
-$ asdf global ruby latest
 $ sudo gem install solargraph
 $ bun add -g @typespec/compiler
+$ npm install -g neovim
 ```
 
 ## gcloud
