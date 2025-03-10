@@ -23,7 +23,6 @@ if dein#load_state('/Users/kthatoto/.config/nvim/dein/')
   call dein#add('mattn/emmet-vim')
   call dein#add('terryma/vim-smooth-scroll')
   call dein#add('nathanaelkane/vim-indent-guides')
-  call dein#add('rhysd/accelerated-jk')
   call dein#add('vim-scripts/AnsiEsc.vim')
   call dein#add('simeji/winresizer') " https://qiita.com/simeji/items/e78cc0cf046acc93722=
 
