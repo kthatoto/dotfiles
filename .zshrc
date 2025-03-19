@@ -58,7 +58,6 @@ alias dr='docker compose --profile core run'
 alias drs='docker compose --profile core restart'
 alias dl='docker compose --profile core logs -f --tail=100'
 alias dd='docker compose --profile core down'
-alias dt='docker compose --profile talentpool'
 alias be='bundle exec'
 alias brew-tree="brew deps --tree --installed"
 alias ww='cd $(ghq root)/$(ghq list | peco)'
@@ -96,7 +95,7 @@ rspec-fzf() {
 rspec-only-changed() {
   git diff --name-only develop | grep "_spec\.rb$"
   echo
-  docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $(git diff --name-only develop | grep '_spec\.rb$' | tr '\n' ' ')"
+  docker compose exec -T app bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $(git diff --name-only develop | grep '_spec\.rb$' | tr '\n' ' ')"
 }
 rspec-select() {
   local fzf_bind="j:down,k:up,ctrl-d:half-page-down,ctrl-u:half-page-up,g:first,G:last"

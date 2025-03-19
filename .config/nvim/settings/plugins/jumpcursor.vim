@@ -85,18 +85,18 @@ function! jumpcursor#jump() abort
 
   let lnum = s:jumpcursor_mark_lnums[mark]
 
-  call s:fill_specific_line(lnum)
+  " call s:fill_specific_line(lnum)
+  "
+  " let mark = getcharstr()
+  " call s:jump_cursor_clear()
+  "
+  " if mark ==# '' || mark ==# ' ' || !has_key(s:jumpcursor_mark_cols, mark)
+  "   return
+  " endif
+  "
+  " let col = s:jumpcursor_mark_cols[mark] + 1
 
-  let mark = getcharstr()
-  call s:jump_cursor_clear()
-
-  if mark ==# '' || mark ==# ' ' || !has_key(s:jumpcursor_mark_cols, mark)
-    return
-  endif
-
-  let col = s:jumpcursor_mark_cols[mark] + 1
-
-  call setpos('.', [bufnr(), lnum, col, 0])
+  call setpos('.', [bufnr(), lnum, 0, 0])
 
   let s:jumpcursor_mark_lnums = {}
   let s:jumpcursor_mark_cols = {}
