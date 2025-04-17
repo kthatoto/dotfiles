@@ -72,6 +72,7 @@ alias rspec='rspec-fzf'
 alias rp='rspec-only-changed'
 alias rss='rspec-select'
 alias rpss='rspec-select-interactive'
+alias ai='aider --model gpt-4o --api-key openai=$MY_OPENAI_KEY'
 
 rubocop-only-changed() {
   git diff --name-only develop | grep "\.rb$"
@@ -175,6 +176,9 @@ search-find() {
 
 # for homebrew
 export PATH="/usr/local/bin:$PATH"
+
+# for uv / aider
+export PATH="/Users/kthatoto/.local/bin:$PATH"
 
 BREW_PREFIX=$(brew --prefix)
 export LDFLAGS="-L${BREW_PREFIX}/opt/openssl/lib -L${BREW_PREFIX}/lib"

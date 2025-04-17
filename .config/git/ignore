@@ -3,3 +3,4 @@ Session.vim
 .envrc
 .tool-versions
 .env
+.aider*
