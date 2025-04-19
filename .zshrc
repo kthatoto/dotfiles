@@ -72,6 +72,7 @@ alias rspec='rspec-fzf'
 alias rp='rspec-only-changed'
 alias rss='rspec-select'
 alias rpss='rspec-select-interactive'
+alias ut='de app bin/update_types && git st && git add . && git cm "update types"'
 alias ai='aider --model gpt-4o --api-key openai=$MY_OPENAI_KEY --no-auto-commits'
 
 rubocop-only-changed() {
