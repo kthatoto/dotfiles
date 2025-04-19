@@ -114,6 +114,7 @@ EOS
   pr_url=$(gh pr create --base "$prev_branch" --head "$current_branch" --title "$pr_title" --body "$(cat ${pr_body})" --assignee "@me")
 
   echo
+  echo -e "${GREEN}✨ Pull request created successfully! ✨${RESET}"
   echo -n "Open pull request in browser? [Y/n]: "
   read -r open_confirm
   if [[ "$open_confirm" =~ ^[nN]$ ]]; then
