@@ -73,27 +73,8 @@ alias rp='rspec-only-changed'
 alias rss='rspec-select'
 alias rpss='rspec-select-interactive'
 alias ai='aider --model gpt-4o --api-key openai=$MY_OPENAI_KEY --no-auto-commits'
-
-ut() {
-  de app bin/update_types
-  echo "======== update_types finished ========"
-
-  # Check if there are any changes
-  if [[ -n "$(git status --porcelain)" ]]; then
-    git status
-    echo -n "Changes detected. Commit? [Y/n]: "
-    read -r answer
-
-    if [[ "$answer" == "Y" || "$answer" == "y" || -z "$answer" ]]; then
-      git add .
-      git commit -m "update types"
-    else
-      echo "Skipped commit."
-    fi
-  else
-    echo "No changes detected. Nothing to commit."
-  fi
-}
+source ~/dotfiles/scripts/update-types.sh
+source ~/dotfiles/scripts/pr-tp.sh
 
 rubocop-only-changed() {
   git diff --name-only develop | grep "\.rb$"
