@@ -1,4 +1,4 @@
-# !/usr/bin/env zsh
+#!/bin/bash
 
 pr-tp() {
   local branches=($(git branch --format='%(refname:short)'))

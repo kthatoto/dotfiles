@@ -73,8 +73,9 @@ alias rp='rspec-only-changed'
 alias rss='rspec-select'
 alias rpss='rspec-select-interactive'
 alias ai='aider --model gpt-4o --api-key openai=$MY_OPENAI_KEY --no-auto-commits'
+
 source ~/dotfiles/scripts/update-types.sh
-source ~/dotfiles/scripts/pr-tp.sh
+alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
 
 rubocop-only-changed() {
   git diff --name-only develop | grep "\.rb$"
