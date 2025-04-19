@@ -111,7 +111,7 @@ Screenshot / GIF
 ----------------
 EOS
 
-  pr_url=$(gh pr create --base "$prev_branch" --head "$current_branch" --title "$pr_title" --body "$(cat ${pr_body})" --assign "@me")
+  pr_url=$(gh pr create --base "$prev_branch" --head "$current_branch" --title "$pr_title" --body "$(cat ${pr_body})" --assignee "@me")
 
   echo
   echo -n "Open pull request in browser? [Y/n]: "
