@@ -1,72 +1,86 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-local branches=($(git branch --format='%(refname:short)'))
-local current_branch=$(git branch --contains | awk '{print $2}')
-local sorted_branches=($(for branch in "${branches[@]}"; do
-  description=$(git config branch."$branch".description 2>/dev/null)
-  if [[ -n "$description" ]]; then
-    echo "$description $branch"
+set -euo pipefail
+
+pr-tp() {
+  if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "Not inside a Git repository."
+    return 1
   fi
-done | sort | awk '{print $NF}'))
 
-local prev_branch=""
-for i in "${!sorted_branches[@]}"; do
-  if [[ "${sorted_branches[$i]}" == "$current_branch" ]]; then
-    prev_branch="${sorted_branches[$((i - 1))]}"
-    break
+  local branches=($(git branch --format='%(refname:short)'))
+  local current_branch=$(git branch --show-current)
+
+  local sorted_branches=($(for branch in "${branches[@]}"; do
+    description=$(git config branch."$branch".description 2>/dev/null)
+    if [[ -n "$description" ]]; then
+      echo "$description $branch"
+    fi
+  done | sort | awk '{print $NF}'))
+
+  local prev_branch=""
+  for i in "${!sorted_branches[@]}"; do
+    if [[ "${sorted_branches[$i]}" == "$current_branch" ]]; then
+      if (( i == 0 )); then break; fi
+      prev_branch="${sorted_branches[$((i - 1))]}"
+      break
+    fi
+  done
+
+  if [[ -z "$prev_branch" ]]; then
+    echo "No previous branch found (missing description or incorrect sort order)."
+    return 1
   fi
-done
 
-if [[ -z "$prev_branch" ]]; then
-  echo "No previous branch found."
-  return 1
-fi
+  local current_desc=$(git config branch."$current_branch".description)
+  local prev_desc=$(git config branch."$prev_branch".description)
 
-local current_desc=$(git config branch."$current_branch".description)
-local prev_desc=$(git config branch."$prev_branch".description)
+  if [[ "$current_branch" =~ _([0-9]+)_ ]]; then
+    local issue_number="${BASH_REMATCH[1]}"
+  else
+    echo "Failed to extract issue number from branch name: $current_branch"
+    return 1
+  fi
 
-local GREEN='\033[1;32m'
-local CYAN='\033[1;36m'
-local RESET='\033[0m'
+  local issue_title
+  if ! issue_title=$(gh issue view "$issue_number" --json title -q .title 2>/dev/null); then
+    echo "Failed to retrieve issue title for issue #$issue_number"
+    return 1
+  fi
 
-echo
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━"
-echo -e "      🔍 ${GREEN}PR Preview${CYAN}"
-echo -e "━━━━━━━━━━━━━━━━━━━${RESET}"
-echo -e "${GREEN}${current_branch}${RESET}: $current_desc"
-echo -e "↓"
-echo -e "${GREEN}${prev_branch}${RESET}: $prev_desc"
-echo
-echo -n "Proceed with PR? [y/N]: "
-read -r confirm
+  local cleaned_title
+  cleaned_title=$(echo "$issue_title" | sed -E 's/^\[[^]]+\] *//')
+  local pr_title="[TP#${issue_number}] ${cleaned_title}"
 
-if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-  echo "Canceled"
-  return 1
-fi
+  local GREEN='\033[1;32m'
+  local CYAN='\033[1;36m'
+  local MAGENTA='\033[1;35m'
+  local RESET='\033[0m'
 
-if [[ "$current_branch" =~ _([0-9]+)_ ]]; then
-  local issue_number="${match[1]}"
-else
-  echo "Failed to extract issue number from branch name: $current_branch"
-  return 1
-fi
+  echo
+  echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━"
+  echo -e "      PR Preview"
+  echo -e "━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+  echo -e "${GREEN}${current_branch}${RESET}: $current_desc"
+  echo -e "↓"
+  echo -e "${GREEN}${prev_branch}${RESET}: $prev_desc"
+  echo
+  echo -e "${CYAN}PR Title:${RESET} ${MAGENTA}${pr_title}${RESET}"
+  echo
 
-local issue_title
-if ! issue_title=$(gh issue view "$issue_number" --json title -q .title 2>/dev/null); then
-  echo "Failed to retrieve issue title for issue #$issue_number"
-  return 1
-fi
+  echo -n "Proceed with PR? [Y/n]: "
+  read -r confirm
+  if [[ "$confirm" =~ ^[nN]$ ]]; then
+    echo "PR creation cancelled."
+    return 1
+  fi
 
-local cleaned_title=$(echo "$issue_title" | sed -E 's/^\[[^]]+\] *//')
-local pr_title="[TP#${issue_number}] ${cleaned_title}"
+  echo "Creating pull request..."
+  local work_dir=/tmp/pr-tp/$(date +"%Y-%m-%d_%H%M%S")
+  local pr_body=$work_dir/pr_body.txt
+  mkdir -p $work_dir
 
-echo "Creating pull request..."
-gh pr create \
-  --base "$prev_branch" \
-  --head "$current_branch" \
-  --title "$pr_title" \
-  --body - <<EOF
+  cat <<EOS >> $pr_body
 Deploy Info
 ---------------------
 
@@ -95,4 +109,20 @@ Staging test Status
 
 Screenshot / GIF
 ----------------
-EOF
+EOS
+
+  pr_url=$(gh pr create --base "$prev_branch" --head "$current_branch" --title "$pr_title" --body "$(cat ${pr_body})"
+
+  echo
+  echo -n "Open pull request in browser? [Y/n]: "
+  read -r open_confirm
+  if [[ "$open_confirm" =~ ^[nN]$ ]]; then
+    echo "Not opening browser."
+  else
+    open "$pr_url"
+  fi
+  rm -rf $work_dir
+}
+
+rm -rf /tmp/pr-tp
+pr-tp
