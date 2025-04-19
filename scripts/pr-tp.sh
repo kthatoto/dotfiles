@@ -50,7 +50,7 @@ pr-tp() {
 
   local cleaned_title
   cleaned_title=$(echo "$issue_title" | sed -E 's/^\[[^]]+\] *//')
-  local pr_title="[TP#${issue_number}] ${cleaned_title}"
+  local pr_title="[TP#${issue_number}] ${cleaned_title} (${current_desc})"
 
   local GREEN='\033[1;32m'
   local CYAN='\033[1;36m'
