@@ -28,8 +28,7 @@ pr-tp() {
   done
 
   if [[ -z "$prev_branch" ]]; then
-    echo "No previous branch found (missing description or incorrect sort order)."
-    return 1
+    prev_branch="develop"
   fi
 
   local current_desc=$(git config branch."$current_branch".description)
