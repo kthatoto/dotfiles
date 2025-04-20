@@ -49,7 +49,7 @@ pr-tp() {
 
   local cleaned_title
   cleaned_title=$(echo "$issue_title" | sed -E 's/^\[[^]]+\] *//')
-  local pr_title="[TP#${issue_number}] ${cleaned_title} (${current_desc})"
+  local pr_title="[TP#${issue_number}] ${cleaned_title}"
 
   local GREEN='\033[1;32m'
   local CYAN='\033[1;36m'
@@ -64,7 +64,7 @@ pr-tp() {
   echo -e "↓"
   echo -e "${GREEN}${prev_branch}${RESET}: $prev_desc"
   echo
-  echo -e "${CYAN}PR Title:${RESET} ${MAGENTA}${pr_title}${RESET}"
+  echo -e "${CYAN}PR Title:${RESET} ${MAGENTA}${pr_title} (${current_desc})${RESET}"
   echo
 
   echo -n "Proceed with PR? [Y/n]: "
