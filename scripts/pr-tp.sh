@@ -64,7 +64,7 @@ pr-tp() {
   echo -e "↓"
   echo -e "${GREEN}${prev_branch}${RESET}: $prev_desc"
   echo
-  echo -e "${CYAN}PR Title:${RESET} ${MAGENTA}${pr_title} (${current_desc})${RESET}"
+  echo -e "${CYAN}PR Title:${RESET} ${MAGENTA}${pr_title}${RESET}"
   echo
 
   echo -n "Proceed with PR? [Y/n]: "
@@ -110,7 +110,7 @@ Screenshot / GIF
 ----------------
 EOS
 
-  pr_url=$(gh pr create --base "$prev_branch" --head "$current_branch" --title "$pr_title ($current_desc)" --body "$(cat ${pr_body})" --assignee "@me")
+  pr_url=$(gh pr create --base "$prev_branch" --head "$current_branch" --title "$pr_title" --body "$(cat ${pr_body})" --assignee "@me")
 
   echo
   echo -e "${GREEN}✨ Pull request created successfully! ✨${RESET}"
