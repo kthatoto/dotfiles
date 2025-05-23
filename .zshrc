@@ -131,7 +131,7 @@ rspec-select() {
 
   if [[ "$selected" == "File: $file" ]]; then
     echo "File: $file"
-    docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $file"
+    docker compose exec -T app bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $file"
     return
   fi
 
@@ -139,7 +139,7 @@ rspec-select() {
   line_number=$(echo "$selected" | cut -d: -f1)
   echo $file:$line_number
   echo $selected
-  docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $file:$line_number"
+  docker compose exec -T app bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $file:$line_number"
 }
 rspec-select-interactive() {
   rspec-select $(find spec packs/tp/spec -type f 2>/dev/null | fzf --layout=reverse-list)
