@@ -66,13 +66,13 @@ alias gg='git grep --heading'
 alias rails='de app rails'
 alias format='npm run format:only-changed'
 alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
-alias rspec-cov='docker compose exec -e SIMPLE_COV_ENABLED=true app rspec'
 alias cop='rubocop-only-changed'
 alias rspec='rspec-fzf'
 alias rp='rspec-only-changed'
 alias rss='rspec-select'
 alias rpss='rspec-select-interactive'
 alias ai='aider --model gpt-4o --api-key openai=$MY_OPENAI_KEY --no-auto-commits'
+alias tp-cov='de -e COVERAGE_TP=true app bundle exec rspec packs/tp/spec; open coverage/index.html'
 
 source ~/dotfiles/scripts/update-types.sh
 alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
