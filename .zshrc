@@ -88,7 +88,7 @@ rspec-fzf() {
     de app bundle exec rspec "$file"
     return
   fi
-  local selected=$(find spec | fzf --layout=reverse-list)
+  local selected=$(find spec packs/tp/spec -type f 2>/dev/null | fzf --layout=reverse-list)
   if [[ -z "$selected" ]]; then
     echo "No selection made."
     return 1
