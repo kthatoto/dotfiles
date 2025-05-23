@@ -85,7 +85,7 @@ rubocop-only-changed() {
 rspec-fzf() {
   local file="$1"
   if [[ -n "$file" ]]; then
-    de app rspec "$file"
+    de app bundle exec rspec "$file"
     return
   fi
   local selected=$(find spec | fzf --layout=reverse-list)
@@ -94,7 +94,7 @@ rspec-fzf() {
     return 1
   fi
   echo "rspec $selected"
-  de app rspec "$selected"
+  de app bundle exec rspec "$selected"
 }
 rspec-only-changed() {
   git diff --name-only develop | grep "_spec\.rb$"
