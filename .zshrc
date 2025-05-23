@@ -142,7 +142,7 @@ rspec-select() {
   docker compose exec -T app bash -c "RUBYOPT='-W0' rspec --color --tty $file:$line_number"
 }
 rspec-select-interactive() {
-  rspec-select $(find spec -type f | fzf --layout=reverse-list)
+  rspec-select $(find spec packs/tp/spec -type f 2>/dev/null | fzf --layout=reverse-list)
 }
 
 git-br-list() {
