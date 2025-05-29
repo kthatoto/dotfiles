@@ -10,10 +10,12 @@ pr-tp() {
 
   local branches=($(git branch --format='%(refname:short)'))
   local current_branch=$(git branch --show-current)
+  local current_desc=$(git config branch."$current_branch".description)
+  local current_prefix=$(echo "$current_desc" | cut -d'-' -f1)
 
   local sorted_branches=($(for branch in "${branches[@]}"; do
     description=$(git config branch."$branch".description 2>/dev/null)
-    if [[ -n "$description" ]]; then
+    if [[ -n "$description" && "$description" =~ ^$current_prefix ]]; then
       echo "$description $branch"
     fi
   done | sort | awk '{print $NF}'))
