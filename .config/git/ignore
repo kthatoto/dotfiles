@@ -4,3 +4,6 @@ Session.vim
 .tool-versions
 .env
 .aider*
+
+**/.claude/settings.local.json
+.claude/**/*
