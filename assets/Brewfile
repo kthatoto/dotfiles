@@ -24,6 +24,7 @@ brew "watchman"
 brew "fzf"
 brew "libpq"
 brew "jsonnet"
+brew "difftastic"
 
 cask_args appdir: "/Applications"
 tap "homebrew/cask"
