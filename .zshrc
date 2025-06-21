@@ -192,11 +192,6 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 export PATH="$HOME/bin:$PATH"
 
-# eval "$(anyenv init -)"
-# export GOROOT=`go env GOROOT`
-# export GOPATH=$HOME/go
-# export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-
 eval "$(direnv hook zsh)"
 
 function _peco-history-exec() {
@@ -212,6 +207,10 @@ bindkey '^r' _peco-history-exec
 . "$HOME/.asdf/asdf.sh"
 fpath=(${ASDF_DIR}/completions $fpath)
 autoload -Uz compinit && compinit
+
+export GOROOT="$(asdf where golang)/go"
+export GOPATH="$HOME/go"
+export PATH="$GOROOT/bin:$GOPATH/bin:$PATH"
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/kthatoto/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/kthatoto/google-cloud-sdk/path.zsh.inc'; fi
