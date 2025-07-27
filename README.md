@@ -67,7 +67,6 @@ $ vi
 :CocInstall coc-eslint
 :CocInstall @yaegassy/coc-volar
 :CocInstall @yaegassy/coc-tailwindcss3
-:CocInstall @yaegassy/coc-typescript-vue-plugin
 
 [optional]
 :CocInstall coc-prettier
