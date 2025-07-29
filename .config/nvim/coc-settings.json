@@ -18,6 +18,7 @@
   "coc.preferences.formatOnSave": true,
   "prettier.bracketSpacing": true,
   "prettier.printWidth": 110,
+  "vue.server.hybridMode": false,
 
   "tailwindCSS.enable": true,
   "tailwindCSS.includeLanguages": {
