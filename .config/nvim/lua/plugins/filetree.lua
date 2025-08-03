@@ -27,16 +27,18 @@ return {
 
       require("nvim-tree.api").tree.open()
 
-      -- ファイラー以外にフォーカスを移す
-      vim.schedule(function()
-        for _, win in ipairs(vim.api.nvim_list_wins()) do
-          local buf = vim.api.nvim_win_get_buf(win)
-          if vim.bo[buf].filetype ~= "NvimTree" then
-            vim.api.nvim_set_current_win(win)
-            break
+      -- ✅ ファイルが指定されているときだけフォーカスを戻す
+      if real_file then
+        vim.schedule(function()
+          for _, win in ipairs(vim.api.nvim_list_wins()) do
+            local buf = vim.api.nvim_win_get_buf(win)
+            if vim.bo[buf].filetype ~= "NvimTree" then
+              vim.api.nvim_set_current_win(win)
+              break
+            end
           end
-        end
-      end)
+        end)
+      end
     end
 
     vim.api.nvim_create_autocmd("VimEnter", {
