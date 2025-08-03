@@ -42,7 +42,6 @@ return {
       "lua_ls",
       "ruby_lsp",
       "rubocop",
-      "volar",
       "tailwindcss",
       "tsp_server",
       "yamlls",
@@ -62,6 +61,26 @@ return {
       on_attach = on_attach,
       capabilities = capabilities,
       root_dir = lspconfig.util.root_pattern("sorbet", ".git"),
+    })
+
+    -- Volar (Vue 3)
+    lspconfig.volar.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+      filetypes = { "vue" },
+      init_options = {
+        vue = {
+          hybridMode = false,
+        },
+      },
+      root_dir = lspconfig.util.root_pattern(
+        "vite.config.ts",
+        "vite.config.js",
+        "package.json",
+        "tsconfig.json",
+        "jsconfig.json",
+        ".git"
+      ),
     })
   end,
 }
