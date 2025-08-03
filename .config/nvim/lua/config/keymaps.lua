@@ -31,3 +31,15 @@ map("i", "jj", "<Esc>", { noremap = true, silent = true })  -- 挿入モード�
 map("n", "<C-t>", "<cmd>Telescope find_files<CR>", { noremap = true, silent = true })   -- ファイル検索 (Denite: file/rec):contentReference[oaicite:29]{index=29}
 map("n", "<C-b>", "<cmd>Telescope oldfiles<CR>", { noremap = true, silent = true })     -- 最近使ったファイル (Denite: file_mru):contentReference[oaicite:30]{index=30}
 map("n", "<C-g>", "<cmd>Telescope live_grep<CR>", { noremap = true, silent = true })    -- ファイル全文検索 (Denite: grep):contentReference[oaicite:31]{index=31}
+
+-- Ctrl + - 2連打でコメント（Normalモード）
+vim.keymap.set("n", "<C-_><C-_>", function()
+  require("Comment.api").toggle.linewise.current()
+end, { noremap = true, silent = true })
+
+-- Ctrl + - 2連打でコメント（Visualモード）
+vim.keymap.set("v", "<C-_><C-_>", function()
+  local esc = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
+  vim.api.nvim_feedkeys(esc, "nx", false)
+  require("Comment.api").toggle.linewise(vim.fn.visualmode())
+end, { noremap = true, silent = true })
