@@ -21,3 +21,9 @@ vim.o.splitright = true           -- 縦分割を右に配置:contentReference[o
 -- 2. <Leader>キーの定義 (必要であれば)
 vim.g.mapleader = " "   -- リーダーキーをスペースに設定 (Lazy.nvim読込前に設定)
 vim.g.maplocalleader = "\\"
+
+-- インデント幅の設定
+vim.o.tabstop = 2        -- タブ文字の幅（見た目）
+vim.o.shiftwidth = 2     -- 自動インデントの幅
+vim.o.softtabstop = 2    -- <Tab>/<BS> の幅
+vim.o.expandtab = true   -- タブ入力をスペースに変換
