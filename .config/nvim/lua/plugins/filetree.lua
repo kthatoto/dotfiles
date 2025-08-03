@@ -33,5 +33,24 @@ return {
     vim.api.nvim_create_autocmd("VimEnter", {
       callback = open_nvim_tree,
     })
+
+    vim.api.nvim_create_autocmd("BufEnter", {
+      nested = true,
+      callback = function()
+        local wins = vim.api.nvim_list_wins()
+        local tabwins = {}
+        for _, win in ipairs(wins) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          local ft = vim.bo[buf].filetype
+          if ft ~= "NvimTree" then
+            table.insert(tabwins, win)
+          end
+        end
+        -- NvimTree だけになったら終了
+        if #tabwins == 0 then
+          vim.cmd("quit")
+        end
+      end,
+    })
   end,
 }
