@@ -12,6 +12,7 @@ vim.g.mapleader = " "  -- (念のため再確認) <Leader>キー設定
 vim.g.maplocalleader = "\\"
 
 require("lazy").setup({
+  { import = "plugins" },
   install = { colorscheme = { "gruvbox" } },  -- プラグインインストール時にGruvboxを適用 (例)
   checker = { enabled = true },  -- 起動時にアップデートチェック
 
