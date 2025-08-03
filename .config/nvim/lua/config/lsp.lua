@@ -15,23 +15,24 @@ end
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
--- Lua
-lspconfig.lua_ls.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
--- Ruby (Shopify Ruby LSP)
-lspconfig.ruby_lsp.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
--- RuboCop LSP (非推奨でなければ)
-lspconfig.rubocop.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
+local servers = {
+  "lua_ts",
+  "ruby_lsp",
+  "rubocop",
+  "ts_ls",
+  "vue_ls",
+  "tailwindcss",
+  "tsp_server",
+  "yamlls", -- yaml
+  "zk", -- markdown
+  "prettier",
+}
+for _, server in ipairs(servers) do
+  lspconfig[server].setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+  }
+end
 
 -- Sorbet
 lspconfig.sorbet.setup({
@@ -39,34 +40,4 @@ lspconfig.sorbet.setup({
   on_attach = on_attach,
   capabilities = capabilities,
   root_dir = lspconfig.util.root_pattern("sorbet", ".git"),
-})
-
--- TypeScript
-lspconfig.tsserver.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
--- Vue (Volar)
-lspconfig.vue_ls.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
--- YAML
-lspconfig.yamlls.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
--- TypeSpec (tsp)
-lspconfig.tsp_server.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
--- Markdown (zk)
-lspconfig.zk.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
 })
