@@ -20,7 +20,7 @@ local servers = {
   "ruby_lsp",
   "rubocop",
   "ts_ls",
-  "vue_ls",
+  "volar",
   "tailwindcss",
   "tsp_server",
   "yamlls", -- yaml
