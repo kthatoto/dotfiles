@@ -7,7 +7,18 @@ return {
   },
   config = function()
     require("mason").setup()
-    require("mason-lspconfig").setup()
+    require("mason-lspconfig").setup({
+      ensure_installed = {
+        "vtsls",
+        "lua_ls",
+        "ruby_lsp",
+        "rubocop",
+        "tailwindcss",
+        "tsp_server",
+        "yamlls",
+        "zk",
+      },
+    })
 
     local lspconfig = require("lspconfig")
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -16,16 +27,62 @@ return {
       local map = vim.keymap.set
       map("n", "<space>h", vim.lsp.buf.hover, { desc = "ホバー情報表示", buffer = bufnr })
       map("n", "<C-f>", function()
-        vim.ui.select({ "(s)plit", "(v)split", "(t)ab" }, { prompt = "どの方法で開きますか？" }, function(choice)
-          if not choice then return end
-          local map = { s = "split", v = "vsplit", t = "tabedit" }
-          vim.cmd(map[string.sub(choice, 2, 2)])
-          vim.lsp.buf.definition()
+        local choices = {
+          s = "split",
+          v = "vsplit",
+          t = "tabedit",
+        }
+
+        local prompt = "(s)plit, (v)split, (t)ab を入力して Enter: "
+        vim.ui.input({ prompt = prompt }, function(input)
+          if not input then
+            vim.notify("キャンセルされました", vim.log.levels.INFO)
+            return
+          end
+
+          local key = input:lower():sub(1, 1)
+          local cmd = choices[key]
+          if cmd then
+            vim.cmd(cmd)
+            -- deferでウィンドウ分割完了を待ってからジャンプ
+            vim.defer_fn(function()
+              vim.lsp.buf.definition()
+            end, 20)
+          else
+            vim.notify("無効な入力: " .. input, vim.log.levels.WARN)
+          end
         end)
       end, { desc = "定義ジャンプ方法を選択", buffer = bufnr })
     end
 
-    -- 汎用サーバー
+    -- Volar (vue-language-server)
+    lspconfig.volar.setup({
+      filetypes = { "vue" },
+      init_options = {
+        vue = { hybridMode = false },
+      },
+      on_attach = on_attach,
+      capabilities = capabilities,
+    })
+
+    -- vtsls (TypeScript用 + vue plugin)
+    lspconfig.vtsls.setup({
+      filetypes = { "vue", "typescript", "javascript", "javascriptreact", "typescriptreact" },
+      init_options = {
+        plugins = {
+          {
+            name = "@vue/typescript-plugin",
+            location = vim.fn.stdpath("data")
+              .. "/mason/packages/vue-language-server/node_modules/@vue/language-server/node_modules/@vue/typescript-plugin",
+            languages = { "vue" },
+          },
+        },
+      },
+      on_attach = on_attach,
+      capabilities = capabilities,
+    })
+
+    -- その他のLSP
     local servers = {
       "lua_ls",
       "ruby_lsp",
@@ -43,51 +100,12 @@ return {
       })
     end
 
-    -- Sorbet
+    -- Sorbet (手動設定)
     lspconfig.sorbet.setup({
       cmd = { "srb", "tc", "--lsp" },
       on_attach = on_attach,
       capabilities = capabilities,
       root_dir = lspconfig.util.root_pattern("sorbet", ".git"),
-    })
-
-    -- volar（Vue用LSP） ← vue_lsやveturの代わり
-    lspconfig.volar.setup({
-      filetypes = { "vue" },
-      init_options = {
-        vue = {
-          hybridMode = false, -- 安定性重視。vtslsとの混在を避ける
-        },
-      },
-      on_attach = on_attach,
-      capabilities = capabilities,
-    })
-
-    -- vtsls（TypeScript + Vue 用 plugin 対応）
-    lspconfig.vtsls.setup({
-      filetypes = {
-        "javascript",
-        "javascriptreact",
-        "typescript",
-        "typescriptreact",
-        "vue", -- 重要！
-      },
-      settings = {
-        vtsls = {
-          tsserver = {
-            globalPlugins = {
-              {
-                name = "@vue/typescript-plugin",
-                location = vim.fn.stdpath("data") ..
-                  "/mason/packages/vue-language-server/node_modules/@vue/typescript-plugin",
-                languages = { "vue" },
-              },
-            },
-          },
-        },
-      },
-      on_attach = on_attach,
-      capabilities = capabilities,
     })
   end,
 }

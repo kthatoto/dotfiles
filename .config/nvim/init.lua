@@ -26,3 +26,6 @@ vim.o.tabstop = 2        -- タブ文字の幅（見た目）
 vim.o.shiftwidth = 2     -- 自動インデントの幅
 vim.o.softtabstop = 2    -- <Tab>/<BS> の幅
 vim.o.expandtab = true   -- タブ入力をスペースに変換
+
+-- その他
+vim.o.winborder = "rounded"
