@@ -12,7 +12,6 @@ vim.g.mapleader = " "  -- (念のため再確認) <Leader>キー設定
 vim.g.maplocalleader = "\\"
 
 require("lazy").setup({
-  spec = { { import = "plugins" } },  -- 'lua/plugins/' ディレクトリからプラグイン定義を読み込む
   install = { colorscheme = { "gruvbox" } },  -- プラグインインストール時にGruvboxを適用 (例)
   checker = { enabled = true },  -- 起動時にアップデートチェック
 
@@ -26,6 +25,10 @@ require("lazy").setup({
   { "hrsh7th/cmp-nvim-lsp" },
   { "hrsh7th/cmp-buffer" },
   { "hrsh7th/cmp-path" },
+  { "L3MON4D3/LuaSnip" },
+  { "saadparwaiz1/cmp_luasnip" },
+  { "rafamadriz/friendly-snippets" },
+
   -- Fuzzy finder
   { "nvim-telescope/telescope.nvim", dependencies = { "nvim-lua/plenary.nvim" } },
   -- Git
@@ -33,9 +36,3 @@ require("lazy").setup({
   -- UI
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 })
-
--- require("lazy").setup({
---  { "L3MON4D3/LuaSnip" },
---  { "saadparwaiz1/cmp_luasnip" },
---  { "rafamadriz/friendly-snippets" },
--- )
