@@ -42,7 +42,6 @@ return {
       "lua_ls",
       "ruby_lsp",
       "rubocop",
-      "ts_ls",
       "volar",
       "tailwindcss",
       "tsp_server",
