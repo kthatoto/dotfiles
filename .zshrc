@@ -73,6 +73,7 @@ alias rss='rspec-select'
 alias rpss='rspec-select-interactive'
 alias cov-tp='de -e COVERAGE_TP=true app bundle exec rspec packs/tp/spec; open coverage/index.html'
 alias c='claude'
+alias pp='pnpm'
 
 source ~/dotfiles/scripts/update-types.sh
 alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
@@ -224,3 +225,5 @@ _git_br() {
 }
 
 export PATH="$PATH:$HOME/.bun/bin"
+
+source ~/completion-for-pnpm.bash
