@@ -16,5 +16,6 @@ cmp.setup({
     { name = "buffer" },
     { name = "path" },
     { name = "luasnip" },
+    { name = "copilot", group_index = 2 },
   }),
 })
