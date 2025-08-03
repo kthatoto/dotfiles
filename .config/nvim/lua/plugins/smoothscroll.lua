@@ -3,18 +3,30 @@ return {
   event = "WinScrolled",
   config = function()
     require("neoscroll").setup({
-      -- デフォルトで true
-      mappings = { '<C-u>', '<C-d>', '<C-b>', '<C-f>' },
+      mappings = { '<C-u>', '<C-d>' },
       hide_cursor = true,
       stop_eof = true,
-      easing_function = "quadratic", -- "sine" など他にも可
+      respect_scrolloff = false,
+      cursor_scrolls_alone = true,
+      easing_function = "quadratic",
     })
 
-    local t = {}
-    t['<C-u>'] = { 'scroll', { '-vim.wo.scroll', 'true', '100' } }
-    t['<C-d>'] = { 'scroll', { 'vim.wo.scroll', 'true', '100' } }
-    t['<C-b>'] = { 'scroll', { '-vim.api.nvim_win_get_height(0)', 'true', '150' } }
-    t['<C-f>'] = { 'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '150' } }
-    require('neoscroll.config').set_mappings(t)
-  end
+    local scroll = require("neoscroll").scroll
+
+    vim.keymap.set("n", "<C-u>", function()
+      scroll(-vim.wo.scroll, {
+        move_cursor = true,
+        duration = 100,
+        easing = "quadratic",
+      })
+    end, { silent = true, desc = "Smooth scroll up" })
+
+    vim.keymap.set("n", "<C-d>", function()
+      scroll(vim.wo.scroll, {
+        move_cursor = true,
+        duration = 100,
+        easing = "quadratic",
+      })
+    end, { silent = true, desc = "Smooth scroll down" })
+  end,
 }
