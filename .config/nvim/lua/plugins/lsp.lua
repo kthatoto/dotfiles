@@ -67,20 +67,13 @@ return {
     lspconfig.volar.setup({
       on_attach = on_attach,
       capabilities = capabilities,
-      filetypes = { "vue" },
+      filetypes = { "vue", "javascript", "typescript" },
       init_options = {
-        vue = {
-          hybridMode = false,
+        typescript = {
+          tsdk = vim.fn.stdpath("data") .. "/mason/packages/typescript-language-server/node_modules/typescript/lib"
         },
       },
-      root_dir = lspconfig.util.root_pattern(
-        "vite.config.ts",
-        "vite.config.js",
-        "package.json",
-        "tsconfig.json",
-        "jsconfig.json",
-        ".git"
-      ),
+      root_dir = lspconfig.util.root_pattern("package.json", "tsconfig.json", "jsconfig.json", ".git"),
     })
   end,
 }
