@@ -2,6 +2,7 @@ require("config.lazy")
 require("config.lsp")
 require("config.cmp")
 require("config.treesitter")
+require("config.keymaps")
 
 -- 1. 基本オプションの設定 (init.vimから移行)
 vim.o.number = true               -- 行番号を表示 (init.vim: set number)
