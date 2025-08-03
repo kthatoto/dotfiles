@@ -43,12 +43,19 @@ $ asdf install bun 1.0.17
 $ asdf install python latest
 ```
 
+## Install fonts
+```
+$ brew install --cask font-hack-nerd-font
+```
+
 ## Configure applications
 
 - iTerm2
   - Profiles > Colors
     - Import `~/dotfiles/assets/hybrid.itermcolors` into "Color Presets" and select it
     - Set `#3e65b3` to "Selection"
+  - Profiles > Text
+    - Set Font `Hack Nerd Font Mono`
 - Neovim
 
 ```
