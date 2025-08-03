@@ -16,7 +16,7 @@ end
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 local servers = {
-  "lua_ts",
+  "lua_ls",
   "ruby_lsp",
   "rubocop",
   "ts_ls",
@@ -25,7 +25,6 @@ local servers = {
   "tsp_server",
   "yamlls", -- yaml
   "zk", -- markdown
-  "prettier",
 }
 for _, server in ipairs(servers) do
   lspconfig[server].setup {
