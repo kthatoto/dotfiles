@@ -14,12 +14,10 @@ return {
     require("nvim-tree").setup({
       view = { width = 40 },
       update_focused_file = { enable = true },
-      -- open_on_setup は削除！
     })
 
     -- Neovim起動時に自動でnvim-treeを開く（推奨方法）
     local function open_nvim_tree(data)
-      -- 実ファイル or 無名バッファ 以外なら無視
       local real_file = vim.fn.filereadable(data.file) == 1
       local no_name = data.file == "" and vim.bo[data.buf].buftype == ""
 
@@ -28,6 +26,17 @@ return {
       end
 
       require("nvim-tree.api").tree.open()
+
+      -- ファイラー以外にフォーカスを移す
+      vim.schedule(function()
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          if vim.bo[buf].filetype ~= "NvimTree" then
+            vim.api.nvim_set_current_win(win)
+            break
+          end
+        end
+      end)
     end
 
     vim.api.nvim_create_autocmd("VimEnter", {
