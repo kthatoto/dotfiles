@@ -38,6 +38,11 @@ return {
       end, { desc = "定義ジャンプ方法を選択", buffer = bufnr })
     end
 
+    -- Vue用のts pluginの絶対パスを取得
+    local vue_plugin_path = vim.fn.stdpath("data")
+      .. "/mason/packages/vue-language-server/node_modules/@vue/typescript-plugin"
+
+    -- LSP設定
     local servers = {
       "lua_ls",
       "ruby_lsp",
@@ -55,7 +60,7 @@ return {
       }
     end
 
-    -- Sorbet
+    -- Sorbet (例外的に手動cmd指定)
     lspconfig.sorbet.setup({
       cmd = { "srb", "tc", "--lsp" },
       on_attach = on_attach,
@@ -63,17 +68,40 @@ return {
       root_dir = lspconfig.util.root_pattern("sorbet", ".git"),
     })
 
-    -- Volar (Vue 3)
+    -- vueファイルには volar を使用（vueファイル専用）
     lspconfig.volar.setup({
+      filetypes = { "vue" },
+      init_options = {
+        vue = { hybridMode = true },
+      },
       on_attach = on_attach,
       capabilities = capabilities,
-      filetypes = { "vue", "javascript", "typescript" },
-      init_options = {
-        typescript = {
-          tsdk = vim.fn.stdpath("data") .. "/mason/packages/typescript-language-server/node_modules/typescript/lib"
+    })
+
+    -- ts/tsx などの TypeScript に対して vtsls を使い、@vue/typescript-plugin を登録
+    lspconfig.vtsls.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+      settings = {
+        vtsls = {
+          tsserver = {
+            globalPlugins = {
+              {
+                name = "@vue/typescript-plugin",
+                location = vue_plugin_path,
+                languages = { "vue" },
+              },
+            },
+          },
         },
       },
-      root_dir = lspconfig.util.root_pattern("package.json", "tsconfig.json", "jsconfig.json", ".git"),
+      filetypes = {
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "vue", -- ← これを入れないと @vue/typescript-plugin が効かない
+      },
     })
   end,
 }
