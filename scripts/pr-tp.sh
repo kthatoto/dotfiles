@@ -69,6 +69,11 @@ pr-tp() {
   echo -e "${CYAN}PR Title:${RESET} ${MAGENTA}${pr_title}${RESET}"
   echo
 
+  read -r -p "PR Title: [TP#${$issue_title}] " input_title
+  if [[ -n "$input_title" ]]; then
+    pr_title="[TP#${issue_title}] $input_title"
+  fi
+
   echo -n "Proceed with PR? [Y/n]: "
   read -r confirm
   if [[ "$confirm" =~ ^[nN]$ ]]; then
