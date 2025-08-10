@@ -79,9 +79,9 @@ source ~/dotfiles/scripts/update-types.sh
 alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
 
 rubocop-only-changed() {
-  git diff --name-only develop | grep "\.rb$"
+  git diff --name-only --diff-filter=d develop | grep "\.rb$"
   echo
-  docker compose exec -T app rubocop --color $(git diff --name-only develop | grep "\.rb$") $@
+  docker compose exec -T app rubocop --color $(git diff --name-only --diff-filter=d develop | grep "\.rb$") "$@"
 }
 rspec-fzf() {
   local file="$1"
