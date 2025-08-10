@@ -98,9 +98,9 @@ rspec-fzf() {
   de app bundle exec rspec "$selected"
 }
 rspec-only-changed() {
-  git diff --name-only develop | grep "_spec\.rb$"
+  git diff --name-only --diff-filter=d develop | grep "_spec\.rb$"
   echo
-  docker compose exec -T app bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $(git diff --name-only develop | grep '_spec\.rb$' | tr '\n' ' ')"
+  docker compose exec -T app bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $(git diff --name-only --diff-filter=d develop | grep '_spec\.rb$' | tr '\n' ' ')"
 }
 rspec-select() {
   local fzf_bind="j:down,k:up,ctrl-d:half-page-down,ctrl-u:half-page-up,g:first,G:last"
