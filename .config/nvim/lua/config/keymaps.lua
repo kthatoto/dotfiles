@@ -43,5 +43,5 @@ end, { noremap = true, silent = true })
 
 -- jumpcursor
 vim.keymap.set("n", "<space>j", function()
-  require("jumpcursor").jump()
+  require("custom.jumpcursor").jump()
 end, { silent = true, desc = "Jump by overlay marks in window" })

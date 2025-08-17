@@ -2,80 +2,63 @@ local M = {}
 
 -- 文字リスト（vim.g.jumpcursor_marks があればそれを使う）
 local default_marks = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@[;:],./_-^\\1234567890"
-local marks = vim.g.jumpcursor_marks
-if type(marks) == "string" then
-  -- 文字列なら1文字ずつ分解
-  local t = {}
-  for p, c in utf8.codes(marks) do
-    t[#t + 1] = utf8.char(c)
+
+local function to_char_list(x)
+  if type(x) == "table" then
+    return x
   end
-  marks = t
-elseif type(marks) == "table" then
-  -- そのまま使う
-else
-  local t = {}
-  for p, c in utf8.codes(default_marks) do
-    t[#t + 1] = utf8.char(c)
-  end
-  marks = t
+  local s = (type(x) == "string" and x or default_marks)
+  -- Vimのsplit + \zs で1文字ごとに分割（UTF-8対応）
+  return vim.fn.split(s, "\\zs")
 end
+
+local marks = to_char_list(vim.g.jumpcursor_marks)
 
 local ns = vim.api.nvim_create_namespace("jumpcursor")
 local mark_lnums = {} -- mark -> lnum (1-index)
-local mark_cols  = {} -- mark -> col  (0-index), 今回未使用だが残しておく
+local mark_cols  = {} -- mark -> col  (0-index)
 
--- ウィンドウ内の可視範囲にオーバレイ文字を配置
+-- ウィンドウ内の可視範囲にオーバレイ文字を配置（各行の全非空白に同じマークを置く＝元実装準拠）
 local function fill_window()
   local start_line = vim.fn.line("w0")
   local end_line   = vim.fn.line("w$")
   local bufnr      = vim.api.nvim_get_current_buf()
   local mark_len   = #marks
 
-  -- クリアしてから描画（ちらつき防止のため一旦全クリア）
   vim.api.nvim_buf_clear_namespace(bufnr, ns, start_line - 1, end_line)
 
   local mark_idx = 1
-  local i = start_line
-  while i <= end_line do
-    if mark_idx > mark_len then
-      break
-    end
-    local text = vim.api.nvim_buf_get_lines(bufnr, i - 1, i, false)[1] or ""
+  for lnum = start_line, end_line do
+    if mark_idx > mark_len then break end
+
+    local text = vim.api.nvim_buf_get_lines(bufnr, lnum - 1, lnum, false)[1] or ""
     local mark = marks[mark_idx]
-    -- 行内の非空白の最初の位置に印を置く（元実装は行内すべてに置いていたが、
-    -- すぐにマーク不足になりやすいので1行1つに最適化。全箇所に置きたい場合は下の loop を有効化）
-    local placed = false
+
+    -- 行内の全ての非空白文字に同じマークを重ねる
     for col = 0, #text - 1 do
       local ch = text:sub(col + 1, col + 1)
       if ch ~= " " and ch ~= "\t" then
-        vim.api.nvim_buf_set_extmark(bufnr, ns, i - 1, col, {
+        vim.api.nvim_buf_set_extmark(bufnr, ns, lnum - 1, col, {
           virt_text_pos = "overlay",
           virt_text = { { mark, "ErrorMsg" } },
         })
-        mark_lnums[mark] = i
-        mark_cols[mark]  = col
-        placed = true
-        break
       end
     end
-    if placed then
-      mark_idx = mark_idx + 1
-    end
-    i = i + 1
+
+    -- そのマークはこの行を指す
+    mark_lnums[mark] = lnum
+    mark_idx = mark_idx + 1
   end
 end
-
--- 行内の全ての非空白にマークを振りたい場合はこれを使う（オリジナルに近い挙動）
+-- 行内の全非空白にマークを振る（2段階ジャンプ用・必要なら使う）
 local function fill_specific_line(lnum)
   local bufnr = vim.api.nvim_get_current_buf()
   local text  = vim.api.nvim_buf_get_lines(bufnr, lnum - 1, lnum, false)[1] or ""
-  local mark_idx = 1
   local mark_len = #marks
+  local mark_idx = 1
 
   for col = 0, #text - 1 do
-    if mark_idx > mark_len then
-      break
-    end
+    if mark_idx > mark_len then break end
     local ch = text:sub(col + 1, col + 1)
     if ch ~= " " and ch ~= "\t" then
       local mark = marks[mark_idx]
@@ -112,10 +95,10 @@ function M.jump()
     return
   end
 
-  -- 行ジャンプ（列までやりたい場合は下を有効化）
+  -- 行ジャンプ
   vim.api.nvim_win_set_cursor(0, { lnum, 0 })
 
-  -- 2段階ジャンプ（行→列）を使いたい場合：
+  -- 2段階（行 -> 列）にしたい場合は以下を有効化
   -- fill_specific_line(lnum)
   -- ok, key = pcall(vim.fn.getcharstr)
   -- clear_window_ns()
