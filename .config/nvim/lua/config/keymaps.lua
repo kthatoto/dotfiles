@@ -45,3 +45,36 @@ end, { noremap = true, silent = true })
 vim.keymap.set("n", "<space>j", function()
   require("custom.jumpcursor").jump()
 end, { silent = true, desc = "Jump by overlay marks in window" })
+
+-- 定義ジャンプ
+local nav = require("custom.lsp_nav")
+local function fallback_ctrl_f()
+  local keys = vim.api.nvim_replace_termcodes("<C-f>", true, false, true)
+  vim.api.nvim_feedkeys(keys, "n", false)
+end
+vim.keymap.set("n", "<C-f>", function()
+  if vim.tbl_isempty(vim.lsp.get_active_clients({ bufnr = 0 })) then
+    return fallback_ctrl_f()
+  end
+
+  local choices = { s = "split", v = "vsplit", t = "tabedit" }
+  local prompt = "(s)plit, (v)split, (t)ab を入力して Enter（空Enter=現在のウィンドウ）: "
+
+  vim.ui.input({ prompt = prompt }, function(input)
+    if input == nil then return end               -- Esc
+    if input:match("^%s*$") then                  -- 空Enter
+      nav.goto_definition_no_qf()
+      return
+    end
+    local key = input:lower():sub(1, 1)
+    local cmd = choices[key]
+    if cmd then
+      vim.cmd(cmd)
+      vim.defer_fn(function()
+        nav.goto_definition_no_qf()
+      end, 20)
+    else
+      vim.notify("無効な入力: " .. input, vim.log.levels.WARN)
+    end
+  end)
+end, { desc = "LSP 定義ジャンプ（空Enter=そのまま）", silent = true })

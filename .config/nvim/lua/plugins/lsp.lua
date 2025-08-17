@@ -26,33 +26,7 @@ return {
     local on_attach = function(_, bufnr)
       local map = vim.keymap.set
       map("n", "<space>h", vim.lsp.buf.hover, { desc = "ホバー情報表示", buffer = bufnr })
-      map("n", "<C-f>", function()
-        local choices = {
-          s = "split",
-          v = "vsplit",
-          t = "tabedit",
-        }
 
-        local prompt = "(s)plit, (v)split, (t)ab を入力して Enter: "
-        vim.ui.input({ prompt = prompt }, function(input)
-          if not input then
-            vim.notify("キャンセルされました", vim.log.levels.INFO)
-            return
-          end
-
-          local key = input:lower():sub(1, 1)
-          local cmd = choices[key]
-          if cmd then
-            vim.cmd(cmd)
-            -- deferでウィンドウ分割完了を待ってからジャンプ
-            vim.defer_fn(function()
-              vim.lsp.buf.definition()
-            end, 20)
-          else
-            vim.notify("無効な入力: " .. input, vim.log.levels.WARN)
-          end
-        end)
-      end, { desc = "定義ジャンプ方法を選択", buffer = bufnr })
     end
 
     -- Volar (vue-language-server)
