@@ -73,6 +73,7 @@ alias rss='rspec-select'
 alias rpss='rspec-select-interactive'
 alias cov-tp='de -e COVERAGE_TP=true app bundle exec rspec packs/tp/spec; open coverage/index.html'
 alias c='claude'
+alias cdr='claude --dangerously-skip-permissions'
 alias pp='pnpm'
 
 source ~/dotfiles/scripts/update-types.sh
