@@ -34,3 +34,11 @@ vim.cmd [[highlight ZenkakuSpace ctermbg=red guibg=red]]
 vim.cmd [[highlight ExtraWhitespace ctermbg=red guibg=red]]
 vim.cmd [[match  ZenkakuSpace /　/]]
 vim.cmd [[2match ExtraWhitespace /\s\+$/]]
+
+-- Diagnostic のフロートを自動で開く
+vim.api.nvim_create_autocmd("CursorHold", {
+  callback = function()
+    vim.diagnostic.open_float(nil, { focus = false })
+  end,
+})
+vim.o.updatetime = 500
