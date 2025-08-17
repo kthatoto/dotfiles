@@ -29,3 +29,9 @@ vim.o.expandtab = true   -- タブ入力をスペースに変換
 
 -- その他
 vim.o.winborder = "rounded"
+
+-- 空白ハイライト
+vim.cmd [[highlight ZenkakuSpace ctermbg=red guibg=red]]
+vim.cmd [[highlight ExtraWhitespace ctermbg=red guibg=red]]
+vim.cmd [[match  ZenkakuSpace /　/]]
+vim.cmd [[2match ExtraWhitespace /\s\+$/]]
