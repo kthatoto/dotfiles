@@ -1,6 +1,5 @@
 require("config.lazy")
 require("config.cmp")
-require("config.treesitter")
 require("config.keymaps")
 require("custom.dim_inactive")
 
