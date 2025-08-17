@@ -40,3 +40,8 @@ vim.keymap.set("v", "<C-_><C-_>", function()
   vim.api.nvim_feedkeys(esc, "nx", false)
   require("Comment.api").toggle.linewise(vim.fn.visualmode())
 end, { noremap = true, silent = true })
+
+-- jumpcursor
+vim.keymap.set("n", "<space>j", function()
+  require("jumpcursor").jump()
+end, { silent = true, desc = "Jump by overlay marks in window" })

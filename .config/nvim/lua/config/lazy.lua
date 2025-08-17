@@ -13,6 +13,7 @@ vim.g.maplocalleader = "\\"
 
 require("lazy").setup({
   { import = "plugins" },
+  { import = "custom" },
   install = { colorscheme = { "gruvbox" } },  -- プラグインインストール時にGruvboxを適用 (例)
   checker = { enabled = true },  -- 起動時にアップデートチェック
 
