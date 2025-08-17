@@ -14,15 +14,12 @@ map("n", "sn", "gt", { noremap = true })       -- 次のタブへ移動:contentR
 map("n", "sp", "gT", { noremap = true })       -- 前のタブへ移動:contentReference[oaicite:25]{index=25}
 map("n", "st", "<cmd>tabnew<CR>", { silent = true })   -- 新しいタブを開く:contentReference[oaicite:26]{index=26}
 
--- -- 検索時に'*'で最初の一致箇所に飛ばない設定 (init.vimでのnnoremap * のLua版)
--- map("n", "*", function()
---   vim.fn.setreg("/", "\\<" .. vim.fn.expand("<cword>") .. "\\>")
---   vim.opt.hlsearch = true
---   -- カーソル位置を動かさずにハイライトだけ有効にする
--- end, { silent = true })
-
--- -- ターミナルモードからEscでノーマルモードに戻る
--- map("t", "<Esc>", [[<C-\><C-n>]], { silent = true })  -- (init.vimのtnoremapと同等):contentReference[oaicite:27]{index=27}
+-- 検索時に'*'で最初の一致箇所に飛ばない設定 (init.vimでのnnoremap * のLua版)
+map("n", "*", function()
+  vim.fn.setreg("/", "\\<" .. vim.fn.expand("<cword>") .. "\\>")
+  vim.opt.hlsearch = true
+  -- カーソル位置を動かさずにハイライトだけ有効にする
+end, { silent = true })
 
 -- 挿入モードのキーマップ
 map("i", "jj", "<Esc>", { noremap = true, silent = true })  -- 挿入モード中 `jj` でノーマルモード復帰:contentReference[oaicite:28]{index=28}
