@@ -8,6 +8,11 @@ pr-tp() {
     return 1
   fi
 
+  git push -u origin "$(git branch --show-current)" >/dev/null 2>&1 || {
+    echo "Failed to push current branch to origin."
+    return 1
+  }
+
   local branches=($(git branch --format='%(refname:short)'))
   local current_branch=$(git branch --show-current)
   local current_desc=$(git config branch."$current_branch".description)
@@ -117,6 +122,7 @@ Screenshot / GIF
 EOS
 
   pr_url=$(gh pr create --base "$prev_branch" --head "$current_branch" --title "$pr_title" --body "$(cat ${pr_body})" --assignee "@me")
+  rm -rf $work_dir
 
   echo
   echo -e "${GREEN}✨ Pull request created successfully! ✨${RESET}"
@@ -127,7 +133,6 @@ EOS
   else
     open "$pr_url"
   fi
-  rm -rf $work_dir
 }
 
 rm -rf /tmp/pr-tp
