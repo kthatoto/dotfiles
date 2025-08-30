@@ -189,7 +189,7 @@ return {
     ----------------------------------------------------------------
     -- その他の LSP
     ----------------------------------------------------------------
-    for _, server in ipairs({ "lua_ls","ruby_lsp","rubocop","tailwindcss","yamlls","zk" }) do
+    for _, server in ipairs({ "lua_ls","ruby_lsp","rubocop","tailwindcss","yamlls","zk","gopls" }) do
       lspconfig[server].setup({
         on_attach = function(_, bufnr)
           vim.keymap.set("n", "<space>h", vim.lsp.buf.hover, { buffer = bufnr, desc = "LSP Hover" })
