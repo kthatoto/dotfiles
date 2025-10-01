@@ -121,8 +121,14 @@ Screenshot / GIF
 ----------------
 EOS
 
-  pr_url=$(gh pr create --base "$prev_branch" --head "$current_branch" --title "$pr_title" --body "$(cat ${pr_body})" --assignee "@me")
-  rm -rf $work_dir
+  echo -n "Add label 'Activate CI'? [y/N]: "
+  read -r label_confirm
+  pr_create_cmd=(gh pr create --base "$prev_branch" --head "$current_branch" \
+    --title "$pr_title" --body "$(cat ${pr_body})" --assignee "@me")
+  if [[ "$label_confirm" =~ ^[yY]$ ]]; then
+    pr_create_cmd+=(--label "Activate CI")
+  fi
+  pr_url=$("${pr_create_cmd[@]}")
 
   echo
   echo -e "${GREEN}✨ Pull request created successfully! ✨${RESET}"

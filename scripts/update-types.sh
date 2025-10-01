@@ -9,7 +9,7 @@ update-types() {
     read -r answer
 
     if [[ "$answer" == "Y" || "$answer" == "y" || -z "$answer" ]]; then
-      git add .
+      git add sorbet
       git commit -m "update types"
     else
       echo "Skipped commit."
