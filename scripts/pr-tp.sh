@@ -127,6 +127,7 @@ EOS
     --title "$pr_title" --body "$(cat ${pr_body})" --assignee "@me")
   if [[ "$label_confirm" =~ ^[yY]$ ]]; then
     pr_create_cmd+=(--label "Activate CI")
+    pr_create_cmd+=(--label "Please Review♪")
   fi
   pr_url=$("${pr_create_cmd[@]}")
 
