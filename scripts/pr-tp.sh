@@ -85,7 +85,6 @@ pr-tp() {
     return 1
   fi
 
-  echo "Creating pull request..."
   local work_dir=/tmp/pr-tp/$(date +"%Y-%m-%d_%H%M%S")
   local pr_body=$work_dir/pr_body.txt
   mkdir -p $work_dir
@@ -123,6 +122,9 @@ EOS
 
   echo -n "Add label 'Activate CI'? [y/N]: "
   read -r label_confirm
+
+  echo "Creating pull request..."
+
   pr_create_cmd=(gh pr create --base "$prev_branch" --head "$current_branch" \
     --title "$pr_title" --body "$(cat ${pr_body})" --assignee "@me")
   if [[ "$label_confirm" =~ ^[yY]$ ]]; then
