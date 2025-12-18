@@ -25,7 +25,11 @@ for suffix in a b c d e f g h i j; do
     worktree_dir="$parent_dir/${base_name}-${suffix}"
     if [[ ! -d "$worktree_dir" ]]; then
         echo "Creating worktree at $worktree_dir for branch $branch_name..."
-        git worktree add "$worktree_dir" -b "$branch_name"
+        if git show-ref --verify --quiet "refs/heads/$branch_name"; then
+            git worktree add "$worktree_dir" "$branch_name"
+        else
+            git worktree add "$worktree_dir" -b "$branch_name"
+        fi
 
         for file in "${files_to_sync[@]}"; do
             if [[ -f "$original_repo/$file" ]]; then
@@ -33,6 +37,16 @@ for suffix in a b c d e f g h i j; do
                 echo "Copied $file"
             fi
         done
+
+        if [[ -f "$worktree_dir/pnpm-lock.yaml" ]]; then
+            echo "Running pnpm install..."
+            (cd "$worktree_dir" && pnpm install)
+        fi
+
+        if [[ -f "$worktree_dir/Gemfile.lock" ]]; then
+            echo "Running bundle install..."
+            (cd "$worktree_dir" && bundle install)
+        fi
 
         echo "Done. Worktree created at: $worktree_dir"
         exit 0
