@@ -80,7 +80,15 @@ alias pp='pnpm'
 
 source ~/dotfiles/scripts/update-types.sh
 alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
-alias wt="~/dotfiles/scripts/worktree-sync"
+wt() {
+  ~/dotfiles/scripts/worktree-sync "$@"
+}
+_wt() {
+  local -a branches
+  branches=(${(f)"$(git branch --format='%(refname:short)' 2>/dev/null)"})
+  _describe -t branches 'branch' branches
+}
+compdef _wt wt
 
 rubocop-only-changed() {
   git diff --name-only --diff-filter=d develop | grep "\.rb$"
