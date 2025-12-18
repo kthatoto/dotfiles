@@ -8,6 +8,27 @@ fi
 local branches=($(git branch --format='%(refname:short)'))
 local current_branch=$(git branch --contains | grep '*' | awk '{print $2}')
 
+# Get worktree information
+typeset -A worktree_map
+typeset -A worktree_color
+local current_worktree=$(git rev-parse --show-toplevel)
+local worktree_info=$(git worktree list --porcelain 2>/dev/null)
+local wt_path=""
+local wt_colors=(31 34 33 32 35 36 91 94 93 92 95 96)  # 赤 青 黄 緑 マゼンタ シアン + 明るい版
+local wt_index=0
+while IFS= read -r wt_line; do
+  if [[ "$wt_line" =~ ^worktree\ (.+)$ ]]; then
+    wt_path="${match[1]}"
+  elif [[ "$wt_line" =~ ^branch\ refs/heads/(.+)$ ]]; then
+    local wt_branch="${match[1]}"
+    if [[ "$wt_path" != "$current_worktree" ]]; then
+      worktree_map[$wt_branch]="${wt_path##*/}"
+      worktree_color[$wt_branch]="${wt_colors[$((wt_index % ${#wt_colors[@]} + 1))]}"
+      ((wt_index++))
+    fi
+  fi
+done <<< "$worktree_info"
+
 local count_length_max=0
 local branch_length_max=0
 local develop_not_merged_exists=false
@@ -88,5 +109,12 @@ for line in "${sorted_branches[@]}"; do
   for i in $(seq $((${#line} - 1)) $branch_length_max); do
     echo -n " "
   done
+
+  # Show worktree indicator if branch is checked out in another worktree
+  if [[ -n "${worktree_map[$line]}" ]]; then
+    local color="${worktree_color[$line]}"
+    echo -n " \e[${color}m[${worktree_map[$line]}]\e[0m "
+  fi
+
   echo $(git config branch.$line.description)
 done
