@@ -126,7 +126,7 @@ EOS
   echo "Creating pull request..."
 
   pr_create_cmd=(gh pr create --base "$prev_branch" --head "$current_branch" \
-    --title "$pr_title" --body "$(cat ${pr_body})" --assignee "@me")
+    --title "$pr_title" --body "$(cat ${pr_body})" --assignee "@me" --label "TP")
   if [[ "$label_confirm" =~ ^[yY]$ ]]; then
     pr_create_cmd+=(--label "Activate CI")
     pr_create_cmd+=(--label "Please Review♪")

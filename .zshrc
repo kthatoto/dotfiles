@@ -73,11 +73,14 @@ alias rss='rspec-select'
 alias rpss='rspec-select-interactive'
 alias cov-tp='de -e COVERAGE_TP=true app bundle exec rspec packs/tp/spec; open coverage/index.html'
 alias c='claude'
+alias cc='claude --continue'
 alias cdr='claude --dangerously-skip-permissions'
+alias ccdr='claude --continue --dangerously-skip-permissions'
 alias pp='pnpm'
 
 source ~/dotfiles/scripts/update-types.sh
 alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
+alias wt="~/dotfiles/scripts/worktree-sync"
 
 rubocop-only-changed() {
   git diff --name-only --diff-filter=d develop | grep "\.rb$"
@@ -226,5 +229,6 @@ _git_br() {
 }
 
 export PATH="$PATH:$HOME/.bun/bin"
+export PATH="$PATH":"$HOME/.pub-cache/bin"
 
 source ~/completion-for-pnpm.bash
