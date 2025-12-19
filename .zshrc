@@ -50,20 +50,31 @@ alias jjjj='cd ../../..'
 alias o='open .'
 alias ls='ls -alG'
 alias vi='nvim'
+
 alias docker-prune='docker system prune -f'
-alias db='bin/compose --profile core-backend build'
-alias du='bin/compose --profile core-backend up -d'
-alias de='bin/compose --profile core-backend exec'
-alias dr='bin/compose --profile core-backend run'
-alias drs='bin/compose --profile core-backend restart'
-alias dl='bin/compose --profile core-backend logs -f --tail=100'
-alias dd='bin/compose --profile core-backend down'
+
+dc() {
+  local profile="core-backend"
+  if ! docker compose ps --format '{{.Names}}' 2>/dev/null | grep -q 'app'; then
+    profile="core-backend-test"
+  fi
+  bin/compose --profile "$profile" "$@"
+}
+
+db() { dc build "$@"; }
+du() { dc up -d "$@"; }
+de() { dc exec "$@"; }
+dr() { dc run "$@"; }
+drs() { dc restart "$@"; }
+dl() { dc logs -f --tail=100 "$@"; }
+dd() { dc down "$@"; }
+
 alias be='bundle exec'
 alias brew-tree="brew deps --tree --installed"
 alias ww='cd $(ghq root)/$(ghq list | peco)'
 alias ch='git switch $(git-br-list | peco | sed "s/^\* //" | awk "{print \$1}")'
 alias gg='git grep --heading'
-alias rails='de app rails'
+alias rails='de spring rails'
 alias format='pnpm run format:only-changed'
 alias tree='tree -a -I "\.DS_Store|\.git|node_modules|vendor\/bundle" -N'
 alias cop='rubocop-only-changed'
@@ -71,7 +82,7 @@ alias rspec='rspec-fzf'
 alias rp='rspec-only-changed'
 alias rss='rspec-select'
 alias rpss='rspec-select-interactive'
-alias cov-tp='de -e COVERAGE_TP=true app bundle exec rspec packs/tp/spec; open coverage/index.html'
+alias cov-tp='de -e COVERAGE_TP=true spring bundle exec rspec packs/tp/spec; open coverage/index.html'
 alias c='claude'
 alias cc='claude --continue'
 alias cdr='claude --dangerously-skip-permissions'
@@ -93,12 +104,12 @@ compdef _wt wt
 rubocop-only-changed() {
   git diff --name-only --diff-filter=d develop | grep "\.rb$"
   echo
-  docker compose exec -T app rubocop --color $(git diff --name-only --diff-filter=d develop | grep "\.rb$") "$@"
+  docker compose exec -T spring rubocop --color $(git diff --name-only --diff-filter=d develop | grep "\.rb$") "$@"
 }
 rspec-fzf() {
   local file="$1"
   if [[ -n "$file" ]]; then
-    de app bundle exec rspec "$file"
+    de spring bundle exec rspec "$file"
     return
   fi
   local selected=$(find spec packs/tp/spec -type f 2>/dev/null | fzf --layout=reverse-list)
@@ -107,12 +118,12 @@ rspec-fzf() {
     return 1
   fi
   echo "rspec $selected"
-  de app bundle exec rspec "$selected"
+  de spring bundle exec rspec "$selected"
 }
 rspec-only-changed() {
   git diff --name-only --diff-filter=d develop | grep "_spec\.rb$"
   echo
-  docker compose exec -T app bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $(git diff --name-only --diff-filter=d develop | grep '_spec\.rb$' | tr '\n' ' ')"
+  docker compose exec -T spring bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $(git diff --name-only --diff-filter=d develop | grep '_spec\.rb$' | tr '\n' ' ')"
 }
 rspec-select() {
   local fzf_bind="j:down,k:up,ctrl-d:half-page-down,ctrl-u:half-page-up,g:first,G:last"
@@ -144,7 +155,7 @@ rspec-select() {
 
   if [[ "$selected" == "File: $file" ]]; then
     echo "File: $file"
-    docker compose exec -T app bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $file"
+    docker compose exec -T spring bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $file"
     return
   fi
 
@@ -152,7 +163,7 @@ rspec-select() {
   line_number=$(echo "$selected" | cut -d: -f1)
   echo $file:$line_number
   echo $selected
-  docker compose exec -T app bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $file:$line_number"
+  docker compose exec -T spring bash -c "RUBYOPT='-W0' bundle exec rspec --color --tty $file:$line_number"
 }
 rspec-select-interactive() {
   rspec-select $(find spec packs/tp/spec -type f 2>/dev/null | fzf --layout=reverse-list)
