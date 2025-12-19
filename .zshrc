@@ -72,7 +72,6 @@ dd() { dc down "$@"; }
 alias be='bundle exec'
 alias brew-tree="brew deps --tree --installed"
 alias ww='cd $(ghq root)/$(ghq list | peco)'
-alias ch='git switch $(git-br-list | peco | sed "s/^\* //" | awk "{print \$1}")'
 alias gg='git grep --heading'
 alias rails='de spring rails'
 alias format='pnpm run format:only-changed'
@@ -91,6 +90,7 @@ alias pp='pnpm'
 
 source ~/dotfiles/scripts/update-types.sh
 alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
+
 wt() {
   ~/dotfiles/scripts/worktree-sync "$@"
 }
@@ -100,6 +100,18 @@ _wt() {
   _describe -t branches 'branch' branches
 }
 compdef _wt wt
+
+ch() {
+  local branch=$(git-br-list | peco | sed "s/^\* //" | awk "{print \$1}")
+  [[ -z "$branch" ]] && return
+
+  local worktree_path=$(git worktree list | grep "\[$branch\]" | awk "{print \$1}")
+  if [[ -n "$worktree_path" && "$worktree_path" != "$(pwd)" ]]; then
+    cd "$worktree_path"
+  else
+    git switch "$branch"
+  fi
+}
 
 rubocop-only-changed() {
   git diff --name-only --diff-filter=d develop | grep "\.rb$"

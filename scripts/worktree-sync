@@ -69,6 +69,12 @@ for suffix in a b c d e f g h i j; do
         if [[ -f "$worktree_dir/Gemfile.lock" ]]; then
             echo "Running bundle install..."
             (cd "$worktree_dir" && bundle install)
+
+            echo "Creating tp database..."
+            (cd "$worktree_dir" && rails db:create --database tp)
+
+            echo "Loading tp database schema..."
+            (cd "$worktree_dir" && rails db:schema:load --database tp)
         fi
 
         # post-checkoutフックがあればバックグラウンドで実行
