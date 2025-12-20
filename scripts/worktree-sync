@@ -12,7 +12,7 @@ parent_dir=$(dirname "$original_repo")
 base_name=$(basename "$original_repo")
 
 # Claude関連のファイル/ディレクトリをコピー
-files_to_sync=(".mcp.json" "CLAUDE.local.md" ".env" ".env.common")
+files_to_sync=(".mcp.json" "CLAUDE.local.md" ".env" ".env.common" ".envrc")
 dirs_to_sync=(".claude")
 
 if [[ -z "${1:-}" ]]; then
@@ -61,21 +61,41 @@ for suffix in a b c d e f g h i j; do
         done
 
         # 依存関係のインストール
-        if [[ -f "$worktree_dir/pnpm-lock.yaml" ]]; then
-            echo "Running pnpm install..."
-            (cd "$worktree_dir" && pnpm install)
-        fi
+        echo "Running pnpm install..."
+        (cd "$worktree_dir" && pnpm install)
 
-        if [[ -f "$worktree_dir/Gemfile.lock" ]]; then
-            echo "Running bundle install..."
-            (cd "$worktree_dir" && bundle install)
+        echo "Running bundle install..."
+        (cd "$worktree_dir" && bundle install)
 
-            echo "Creating tp database..."
-            (cd "$worktree_dir" && rails db:create --database tp)
+        (cd "$worktree_dir" && direnv allow)
 
-            echo "Loading tp database schema..."
-            (cd "$worktree_dir" && rails db:schema:load --database tp)
-        fi
+        # Dockerコンテナの起動とDBセットアップ
+        echo "Docker compose up..."
+        (cd "$worktree_dir" && bin/compose --profile core-backend-test up -d)
+
+        echo "Waiting for docker compose to be ready..."
+        max_attempts=60
+        attempt=0
+        while true; do
+            # springコンテナがrunningになるまで待機
+            if (cd "$worktree_dir" && bin/compose --profile core-backend-test ps --format json 2>/dev/null | jq -e 'select(.Service == "spring") | select(.State == "running")' > /dev/null 2>&1); then
+                break
+            fi
+            attempt=$((attempt + 1))
+            if [[ $attempt -ge $max_attempts ]]; then
+                echo "Error: Docker compose did not start within ${max_attempts} seconds"
+                exit 1
+            fi
+            echo "Waiting... ($attempt/$max_attempts)"
+            sleep 1
+        done
+        echo "Docker compose is ready."
+
+        echo "Creating tp database..."
+        (cd "$worktree_dir" && bin/compose --profile core-backend-test exec -w /app spring spring rails db:create --database tp)
+
+        echo "Loading tp database schema..."
+        (cd "$worktree_dir" && bin/compose --profile core-backend-test exec -w /app spring spring rails db:schema:load --database tp)
 
         # post-checkoutフックがあればバックグラウンドで実行
         post_checkout_hook="$worktree_dir/.husky/post-checkout"

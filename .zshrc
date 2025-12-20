@@ -101,6 +101,34 @@ _wt() {
 }
 compdef _wt wt
 
+wr() {
+  local name="$1"
+  [[ -z "$name" ]] && { echo "Usage: wr <worktree-dir-name>"; return 1; }
+
+  local git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null) || { echo "Not in a git repo"; return 1; }
+  local original_repo=$(cd "$git_common_dir" && cd .. && pwd)
+  local parent_dir=$(dirname "$original_repo")
+  local worktree_path="$parent_dir/$name"
+
+  [[ ! -d "$worktree_path" ]] && { echo "Worktree not found: $worktree_path"; return 1; }
+
+  echo "Stopping Docker in $name..."
+  (cd "$worktree_path" && bin/compose down 2>/dev/null) || true
+
+  echo "Removing worktree $name..."
+  git worktree remove "$worktree_path"
+}
+_wr() {
+  local git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null) || return
+  local original_repo=$(cd "$git_common_dir" && cd .. && pwd)
+  local base_name=${original_repo:t}
+
+  local -a worktrees
+  worktrees=(${(f)"$(git worktree list --porcelain 2>/dev/null | grep '^worktree ' | sed 's/^worktree //' | xargs -I{} basename {} | grep -v "^${base_name}$")"})
+  _describe -t worktrees 'worktree' worktrees
+}
+compdef _wr wr
+
 ch() {
   local branch=$(git-br-list | peco | sed "s/^\* //" | awk "{print \$1}")
   [[ -z "$branch" ]] && return
