@@ -62,7 +62,14 @@ dc() {
 }
 
 db() { dc build "$@"; }
-du() { dc up -d "$@"; }
+du() {
+  local profile="core-backend"
+  local dir_name=$(basename "$(pwd)")
+  if [[ "$dir_name" =~ -[a-j]$ ]]; then
+    profile="core-backend-test"
+  fi
+  bin/compose --profile "$profile" up -d "$@"
+}
 de() { dc exec "$@"; }
 dr() { dc run "$@"; }
 drs() { dc restart "$@"; }
@@ -130,11 +137,33 @@ _wr() {
 compdef _wr wr
 
 ch() {
+  local force=false
+  if [[ "$1" == "-f" ]]; then
+    force=true
+  fi
+
   local branch=$(git-br-list | peco | sed "s/^\* //" | awk "{print \$1}")
   [[ -z "$branch" ]] && return
 
   local worktree_path=$(git worktree list | grep "\[$branch\]" | awk "{print \$1}")
+
+  if [[ "$force" == true ]]; then
+    if [[ -n "$worktree_path" ]]; then
+      if [[ -n "$(git -C "$worktree_path" status --porcelain)" ]]; then
+        echo "Uncommitted changes exist in worktree: $worktree_path"
+        return 1
+      fi
+      git -C "$worktree_path" checkout --detach
+    fi
+    git switch "$branch"
+    return
+  fi
+
   if [[ -n "$worktree_path" && "$worktree_path" != "$(pwd)" ]]; then
+    if [[ -n "$(git status --porcelain)" ]]; then
+      echo "Uncommitted changes exist. Use 'ch -f' to force switch."
+      return 1
+    fi
     cd "$worktree_path"
   else
     git switch "$branch"
