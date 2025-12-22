@@ -120,7 +120,7 @@ wr() {
   [[ ! -d "$worktree_path" ]] && { echo "Worktree not found: $worktree_path"; return 1; }
 
   echo "Stopping Docker in $name..."
-  (cd "$worktree_path" && bin/compose down 2>/dev/null) || true
+  (cd "$worktree_path" && bin/compose --profile core-backend-test down 2>/dev/null) || true
 
   echo "Removing worktree $name..."
   git worktree remove "$worktree_path"
@@ -248,6 +248,30 @@ git-br-list() {
     fi
   done
 
+  # Get worktree information
+  typeset -A worktree_map
+  typeset -A worktree_color
+  local worktree_info=$(git worktree list --porcelain 2>/dev/null)
+  local wt_path=""
+  while IFS= read -r wt_line; do
+    if [[ "$wt_line" =~ ^worktree\ (.+)$ ]]; then
+      wt_path="${match[1]}"
+    elif [[ "$wt_line" =~ ^branch\ refs/heads/(.+)$ ]]; then
+      local wt_branch="${match[1]}"
+      local wt_name="${wt_path##*/}"
+      worktree_map[$wt_branch]="$wt_name"
+      # 色を決定: -a, -b, -c... → 固定色、それ以外 → 白(37)
+      local wt_colors=(31 34 33 32 35 36 91 94 93 92 95 96)  # a b c d e f g h i j k l
+      if [[ "$wt_name" =~ -([a-z])$ ]]; then
+        local suffix="${match[1]}"
+        local idx=$(( $(printf '%d' "'$suffix") - 96 ))  # a=1, b=2, ...
+        worktree_color[$wt_branch]="${wt_colors[$idx]}"
+      else
+        worktree_color[$wt_branch]="37"  # 白
+      fi
+    fi
+  done <<< "$worktree_info"
+
   local sorted_branches=($(for branch in "${branches[@]}"; do
     description=$(git config branch."$branch".description 2>/dev/null)
     echo "$description $branch"
@@ -263,6 +287,13 @@ git-br-list() {
     for i in $(seq $((${#line} - 1)) $max); do
       echo -n " "
     done
+
+    # Show worktree indicator if branch is checked out in another worktree
+    if [[ -n "${worktree_map[$line]}" ]]; then
+      local color="${worktree_color[$line]}"
+      echo -n " \e[${color}m[${worktree_map[$line]}]\e[0m "
+    fi
+
     echo $(git config branch.$line.description)
   done
 }
