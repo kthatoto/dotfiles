@@ -27,7 +27,7 @@ while IFS= read -r wt_line; do
       local idx=$(( $(printf '%d' "'$suffix") - 96 ))  # a=1, b=2, ...
       worktree_color[$wt_branch]="${wt_colors[$idx]}"
     else
-      worktree_color[$wt_branch]="37"  # 白
+      worktree_color[$wt_branch]="37;48;5;19"  # 濃い青背景に白文字
     fi
   fi
 done <<< "$worktree_info"

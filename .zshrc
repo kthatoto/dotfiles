@@ -351,3 +351,6 @@ export PATH="$PATH:$HOME/.bun/bin"
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 
 source ~/completion-for-pnpm.bash
+
+# bun completions
+[ -s "/Users/kthatoto/.bun/_bun" ] && source "/Users/kthatoto/.bun/_bun"

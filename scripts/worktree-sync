@@ -92,14 +92,11 @@ for suffix in a b c d e f g h i j; do
         done
         echo "Docker compose is ready."
 
-        echo "Creating tp database..."
+        echo "Creating databases..."
         (cd "$worktree_dir" && bin/compose --profile core-backend-test exec spring rails db:create)
 
-        echo "Dropping asb3 database (if exists)..."
-        (cd "$worktree_dir" && bin/compose --profile core-backend-test exec spring rails db:drop:asb3) || true
-
-        echo "Loading tp database schema..."
-        (cd "$worktree_dir" && bin/compose --profile core-backend-test exec spring rails db:schema:load)
+        echo "Loading database schema (excluding asb3)..."
+        (cd "$worktree_dir" && bin/compose --profile core-backend-test exec spring rails db:schema:load:primary db:schema:load:tp)
 
         # post-checkoutフックがあればバックグラウンドで実行
         post_checkout_hook="$worktree_dir/.husky/post-checkout"
