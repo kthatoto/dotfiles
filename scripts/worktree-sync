@@ -95,6 +95,9 @@ for suffix in a b c d e f g h i j; do
         echo "Creating tp database..."
         (cd "$worktree_dir" && bin/compose --profile core-backend-test exec spring rails db:create)
 
+        echo "Dropping asb3 database (if exists)..."
+        (cd "$worktree_dir" && bin/compose --profile core-backend-test exec spring rails db:drop:asb3) || true
+
         echo "Loading tp database schema..."
         (cd "$worktree_dir" && bin/compose --profile core-backend-test exec spring rails db:schema:load)
 
