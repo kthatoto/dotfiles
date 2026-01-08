@@ -94,6 +94,7 @@ alias cc='claude --continue'
 alias cdr='claude --dangerously-skip-permissions'
 alias ccdr='claude --continue --dangerously-skip-permissions'
 alias pp='pnpm'
+alias label-deploy-peach='make label-deploy/stg-peach'
 
 source ~/dotfiles/scripts/update-types.sh
 alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
