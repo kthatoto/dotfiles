@@ -1,3 +1,10 @@
+# OPENSPEC:START
+# OpenSpec shell completions configuration
+fpath=("/Users/kthatoto/.zsh/completions" $fpath)
+autoload -Uz compinit
+compinit
+# OPENSPEC:END
+
 precmd() {
   vcs_info
   PROMPT="%F{blue}`date "+%m/%d(%a)"`%f%F{yellow}:%*%f%F{magenta}:%~%f:$vcs_info_msg_0_
@@ -355,3 +362,5 @@ source ~/completion-for-pnpm.bash
 
 # bun completions
 [ -s "/Users/kthatoto/.bun/_bun" ] && source "/Users/kthatoto/.bun/_bun"
+
+source "$HOME/dotfiles/scripts/terminal-bg/main.sh"

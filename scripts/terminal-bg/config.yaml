@@ -1,0 +1,9 @@
+default: "#1d1e20"
+
+repos:
+  rakushifu: "#1e1e3f"
+  communication: "#1e3f2f"
+  vibe-tree: "#3f1e2f"
+
+# リポジトリルートにこのファイルがあれば最優先
+per_repo_file: ".terminal-bg"

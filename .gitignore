@@ -10,3 +10,5 @@
 /.config/firebase
 /.config/github-copilot
 /.config/flutter
+/.config/cagent
+/.config/openspec
