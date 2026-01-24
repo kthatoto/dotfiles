@@ -350,10 +350,7 @@ if [ -f '/Users/kthatoto/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/kthato
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/kthatoto/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/kthatoto/google-cloud-sdk/completion.zsh.inc'; fi
 
-_git_br() {
-  branches=(${(f)"$(git branch --format='%(refname:short)')"})
-  compadd "${branches[@]}"
-}
+_git-br() { _git-branch "$@" }
 
 export PATH="$PATH:$HOME/.bun/bin"
 export PATH="$PATH":"$HOME/.pub-cache/bin"

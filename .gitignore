@@ -12,3 +12,4 @@
 /.config/flutter
 /.config/cagent
 /.config/openspec
+/.zsh/completions/
