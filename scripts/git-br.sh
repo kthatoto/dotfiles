@@ -5,8 +5,17 @@ if [ $# -ne 0 ]; then
   return
 fi
 
+# Show loading spinner
+local spinner=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+local spin_idx=0
+spin() {
+  printf "\r${spinner[$((spin_idx % 10 + 1))]}"
+  spin_idx=$((spin_idx + 1))
+}
+spin
+
 local branches=($(git branch --format='%(refname:short)'))
-local current_branch=$(git branch --contains | grep '*' | awk '{print $2}')
+local current_branch=$(git branch --show-current)
 
 # Get worktree information
 typeset -A worktree_map
@@ -20,165 +29,174 @@ while IFS= read -r wt_line; do
     local wt_branch="${match[1]}"
     local wt_name="${wt_path##*/}"
     worktree_map[$wt_branch]="$wt_name"
-    # 色を決定: -a, -b, -c... → 固定色、それ以外 → 白(37)
-    local wt_colors=(31 34 33 32 35 36 91 94 93 92 95 96)  # a b c d e f g h i j k l
+    local wt_colors=(31 34 33 32 35 36 91 94 93 92 95 96)
     if [[ "$wt_name" =~ -([a-z])$ ]]; then
       local suffix="${match[1]}"
-      local idx=$(( $(printf '%d' "'$suffix") - 96 ))  # a=1, b=2, ...
+      local idx=$(( $(printf '%d' "'$suffix") - 96 ))
       worktree_color[$wt_branch]="${wt_colors[$idx]}"
     else
-      worktree_color[$wt_branch]="37;48;5;19"  # 濃い青背景に白文字
+      worktree_color[$wt_branch]="37;48;5;19"
     fi
   fi
 done <<< "$worktree_info"
 
+# Check if develop branch exists
+local develop_exists=$(git rev-parse --verify --quiet develop 2>/dev/null && echo "yes")
+
+# Pre-calculate all data in one pass
+typeset -A branch_descriptions
+typeset -A branch_groups
+typeset -A origin_counts
+typeset -A commits_ahead_map
+typeset -A commits_behind_map
+typeset -A is_merged_map
+
 local count_length_max=0
 local branch_length_max=0
 local worktree_length_max=0
-for line in "${branches[@]}"; do
-  local count_length=0
-  if git rev-parse --verify --quiet origin/$line > /dev/null; then
-    local count=$(git rev-list --count origin/$line..$line)
-    count_length=$((${#count} + 2))
-  fi
 
-  if [[ $count_length_max -lt $count_length ]]; then
-    count_length_max=$count_length
-  fi
-
-  if [[ $branch_length_max -lt ${#line} ]]; then
-    branch_length_max=${#line}
-  fi
-
-  # Track max worktree name length
-  if [[ -n "${worktree_map[$line]}" ]]; then
-    local wt_len=$((${#worktree_map[$line]} + 3))  # +3 for " []"
-    if [[ $worktree_length_max -lt $wt_len ]]; then
-      worktree_length_max=$wt_len
-    fi
-  fi
-done
-
-# Build sorted list with descriptions for grouping
-typeset -A branch_descriptions
-typeset -A branch_groups
 for branch in "${branches[@]}"; do
+  spin
+
+  # Description
   local desc=$(git config branch."$branch".description 2>/dev/null)
   branch_descriptions[$branch]="$desc"
-  # Group by removing last -segment (tp01-04 -> tp01)
   if [[ "$desc" == *-* ]]; then
     branch_groups[$branch]="${desc%-*}"
   else
     branch_groups[$branch]="$desc"
   fi
+
+  # Origin count
+  if git rev-parse --verify --quiet origin/$branch > /dev/null 2>&1; then
+    local cnt=$(git rev-list --count origin/$branch..$branch)
+    origin_counts[$branch]="$cnt"
+    local count_length=$((${#cnt} + 2))
+    [[ $count_length_max -lt $count_length ]] && count_length_max=$count_length
+  fi
+
+  # Branch name length
+  [[ $branch_length_max -lt ${#branch} ]] && branch_length_max=${#branch}
+
+  # Worktree length
+  if [[ -n "${worktree_map[$branch]}" ]]; then
+    local wt_len=$((${#worktree_map[$branch]} + 3))
+    [[ $worktree_length_max -lt $wt_len ]] && worktree_length_max=$wt_len
+  fi
+
+  # Develop comparison
+  if [[ -n "$develop_exists" && "$branch" != "develop" ]]; then
+    commits_ahead_map[$branch]=$(git rev-list --count develop..$branch 2>/dev/null)
+    commits_behind_map[$branch]=$(git rev-list --count $branch..develop 2>/dev/null)
+    if git merge-base --is-ancestor $branch develop 2>/dev/null; then
+      is_merged_map[$branch]="yes"
+    fi
+  fi
 done
 
+# Clear loading spinner
+printf "\r\033[K"
+
+# Sort branches
 local sorted_branches=($(for branch in "${branches[@]}"; do
-  local group="${branch_groups[$branch]}"
-  local desc="${branch_descriptions[$branch]}"
-  echo "$group	$desc	$branch"
+  echo "${branch_groups[$branch]}	${branch_descriptions[$branch]}	$branch"
 done | sort | cut -f3))
 
-# Check if develop branch exists
-local develop_exists=$(git rev-parse --verify --quiet develop 2>/dev/null && echo "yes")
-
+# Build output buffer
+local output=""
 local prev_group=""
+
 for line in "${sorted_branches[@]}"; do
   local group="${branch_groups[$line]}"
 
-  # Group header when group changes
+  # Group header
   if [[ "$group" != "$prev_group" && -n "$group" ]]; then
-    echo "\e[33m── $group ──\e[0m"
+    output+="\e[33m── $group ──\e[0m\n"
     prev_group="$group"
   elif [[ "$group" != "$prev_group" ]]; then
     prev_group="$group"
   fi
 
+  # Current branch marker
   if [[ $line == $current_branch ]]; then
-    echo -n "*"
+    output+="*"
   else
-    echo -n " "
+    output+=" "
   fi
 
-  local count=0
-  local count_length=0
-  if git rev-parse --verify --quiet origin/$line > /dev/null; then
-    count=$(git rev-list --count origin/$line..$line)
-    count_length=$((${#count} + 2))
-  fi
-  for i in $(seq $((${#count} + 2)) $count_length_max); do
-    echo -n " "
-  done
+  # Origin count - total width = count_length_max + 1 (for space after])
+  local count="${origin_counts[$line]}"
+  local total_width=$((count_length_max + 1))
+  [[ $total_width -lt 4 ]] && total_width=4
+
   if [ $line = "develop" ]; then
-    echo -n "\e[30m[0]\e[0m "
-  elif [[ $count_length -gt 0 ]]; then
+    local str="[0]"
+    local pad=$((total_width - 3))
+    output+="\e[30m${str}\e[0m$(printf "%${pad}s" "")"
+  elif [[ -n "$count" ]]; then
+    local str="[$count]"
+    local pad=$((total_width - ${#str}))
     if [[ $count -eq 0 ]]; then
-      echo -n "[$count] "
+      output+="${str}$(printf "%${pad}s" "")"
     else
-      echo -n "\e[31m[$count]\e[0m "
+      output+="\e[31m${str}\e[0m$(printf "%${pad}s" "")"
     fi
   else
-    echo -n "    "
+    output+="$(printf "%${total_width}s" "")"
   fi
 
-  # Dot indicator based on develop status
+  # Dot indicator
   if [[ -n "$develop_exists" ]]; then
     if [ $line = "develop" ]; then
-      echo -n "  "
+      output+="  "
     else
-      # Check commits ahead of develop (branch's own commits)
-      local commits_ahead=$(git rev-list --count develop..$line 2>/dev/null)
-      commits_ahead=${commits_ahead:-0}
-      # Check commits behind develop (develop has new commits)
-      local commits_behind=$(git rev-list --count $line..develop 2>/dev/null)
-      commits_behind=${commits_behind:-0}
+      local commits_ahead="${commits_ahead_map[$line]:-0}"
+      local commits_behind="${commits_behind_map[$line]:-0}"
 
       if [[ $commits_ahead -eq 0 ]]; then
-        # Blue: no own commits yet (just created from develop)
-        echo -n "\e[34m•\e[0m "
-      elif git merge-base --is-ancestor $line develop 2>/dev/null; then
-        # Green: merged to develop (has commits but they're in develop)
-        echo -n "\e[32m•\e[0m "
+        output+="\e[34m•\e[0m "
+      elif [[ -n "${is_merged_map[$line]}" ]]; then
+        output+="\e[32m•\e[0m "
       elif [[ $commits_behind -gt 0 ]]; then
-        # Red: develop has commits not in this branch
-        echo -n "\e[31m•\e[0m "
+        output+="\e[31m•\e[0m "
       else
-        # No dot: up to date with develop, has own commits, not merged
-        echo -n "  "
+        output+="  "
       fi
     fi
   else
-    echo -n "  "
+    output+="  "
   fi
 
+  # Branch name
   if [[ $line == $current_branch ]]; then
-    echo -n "\e[32m$line\e[0m"
+    output+="\e[32m$line\e[0m"
   else
-    echo -n $line
+    output+="$line"
   fi
 
-  for i in $(seq $((${#line} - 1)) $branch_length_max); do
-    echo -n " "
-  done
+  # Branch name padding
+  local branch_pad=$((branch_length_max - ${#line} + 1))
+  output+="$(printf "%${branch_pad}s" "")"
 
-  # Show worktree indicator if branch is checked out in another worktree
+  # Worktree indicator
   local wt_display_len=0
   if [[ -n "${worktree_map[$line]}" ]]; then
     local color="${worktree_color[$line]}"
-    echo -n " \e[${color}m[${worktree_map[$line]}]\e[0m"
+    output+=" \e[${color}m[${worktree_map[$line]}]\e[0m"
     wt_display_len=$((${#worktree_map[$line]} + 3))
   fi
-  # Pad to align descriptions
-  local pad_count=$((worktree_length_max - wt_display_len))
-  if [[ $pad_count -gt 0 ]]; then
-    printf "%${pad_count}s" ""
-  fi
 
-  # Show description
+  # Worktree padding
+  local wt_pad=$((worktree_length_max - wt_display_len))
+  [[ $wt_pad -gt 0 ]] && output+="$(printf "%${wt_pad}s" "")"
+
+  # Description
   local desc="${branch_descriptions[$line]}"
   if [[ -n "$desc" ]]; then
-    echo " $desc"
-  else
-    echo ""
+    output+=" $desc"
   fi
+  output+="\n"
 done
+
+# Output all at once
+echo -n "$output"
