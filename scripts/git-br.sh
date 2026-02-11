@@ -34,7 +34,7 @@ done <<< "$worktree_info"
 
 local count_length_max=0
 local branch_length_max=0
-local develop_not_merged_exists=false
+local worktree_length_max=0
 for line in "${branches[@]}"; do
   local count_length=0
   if git rev-parse --verify --quiet origin/$line > /dev/null; then
@@ -50,18 +50,50 @@ for line in "${branches[@]}"; do
     branch_length_max=${#line}
   fi
 
-  local develop_merged=$(git branch --merged $line | awk '{print $1}' | grep '^develop$')
-  if [[ -z "$develop_exists" ]]; then
-    develop_not_merged_exists=true
+  # Track max worktree name length
+  if [[ -n "${worktree_map[$line]}" ]]; then
+    local wt_len=$((${#worktree_map[$line]} + 3))  # +3 for " []"
+    if [[ $worktree_length_max -lt $wt_len ]]; then
+      worktree_length_max=$wt_len
+    fi
+  fi
+done
+
+# Build sorted list with descriptions for grouping
+typeset -A branch_descriptions
+typeset -A branch_groups
+for branch in "${branches[@]}"; do
+  local desc=$(git config branch."$branch".description 2>/dev/null)
+  branch_descriptions[$branch]="$desc"
+  # Group by removing last -segment (tp01-04 -> tp01)
+  if [[ "$desc" == *-* ]]; then
+    branch_groups[$branch]="${desc%-*}"
+  else
+    branch_groups[$branch]="$desc"
   fi
 done
 
 local sorted_branches=($(for branch in "${branches[@]}"; do
-  local description=$(git config branch."$branch".description 2>/dev/null)
-  echo "$description $branch"
-done | sort | awk '{print $NF}'))
+  local group="${branch_groups[$branch]}"
+  local desc="${branch_descriptions[$branch]}"
+  echo "$group	$desc	$branch"
+done | sort | cut -f3))
 
+# Check if develop branch exists
+local develop_exists=$(git rev-parse --verify --quiet develop 2>/dev/null && echo "yes")
+
+local prev_group=""
 for line in "${sorted_branches[@]}"; do
+  local group="${branch_groups[$line]}"
+
+  # Group header when group changes
+  if [[ "$group" != "$prev_group" && -n "$group" ]]; then
+    echo "\e[33m── $group ──\e[0m"
+    prev_group="$group"
+  elif [[ "$group" != "$prev_group" ]]; then
+    prev_group="$group"
+  fi
+
   if [[ $line == $current_branch ]]; then
     echo -n "*"
   else
@@ -89,18 +121,34 @@ for line in "${sorted_branches[@]}"; do
     echo -n "    "
   fi
 
-  if [[ -n "$develop_not_merged_exists" ]]; then
-    local merged_to_develop=$(git branch --contains $line | awk '{print $1}' | grep '^develop$')
-    local develop_merged=$(git branch --merged $line | awk '{print $1}' | grep '^develop$')
+  # Dot indicator based on develop status
+  if [[ -n "$develop_exists" ]]; then
     if [ $line = "develop" ]; then
       echo -n "  "
-    elif [[ -n "$merged_to_develop" ]]; then
-      echo -n "\e[32m•\e[0m "
-    elif [[ -z "$develop_merged" ]]; then
-      echo -n "\e[31m•\e[0m "
     else
-      echo -n "  "
+      # Check commits ahead of develop (branch's own commits)
+      local commits_ahead=$(git rev-list --count develop..$line 2>/dev/null)
+      commits_ahead=${commits_ahead:-0}
+      # Check commits behind develop (develop has new commits)
+      local commits_behind=$(git rev-list --count $line..develop 2>/dev/null)
+      commits_behind=${commits_behind:-0}
+
+      if [[ $commits_ahead -eq 0 ]]; then
+        # Blue: no own commits yet (just created from develop)
+        echo -n "\e[34m•\e[0m "
+      elif git merge-base --is-ancestor $line develop 2>/dev/null; then
+        # Green: merged to develop (has commits but they're in develop)
+        echo -n "\e[32m•\e[0m "
+      elif [[ $commits_behind -gt 0 ]]; then
+        # Red: develop has commits not in this branch
+        echo -n "\e[31m•\e[0m "
+      else
+        # No dot: up to date with develop, has own commits, not merged
+        echo -n "  "
+      fi
     fi
+  else
+    echo -n "  "
   fi
 
   if [[ $line == $current_branch ]]; then
@@ -114,10 +162,22 @@ for line in "${sorted_branches[@]}"; do
   done
 
   # Show worktree indicator if branch is checked out in another worktree
+  local wt_display_len=0
   if [[ -n "${worktree_map[$line]}" ]]; then
     local color="${worktree_color[$line]}"
-    echo -n " \e[${color}m[${worktree_map[$line]}]\e[0m "
+    echo -n " \e[${color}m[${worktree_map[$line]}]\e[0m"
+    wt_display_len=$((${#worktree_map[$line]} + 3))
   fi
+  # Pad to align descriptions
+  for i in $(seq $wt_display_len $((worktree_length_max - 1))); do
+    echo -n " "
+  done
 
-  echo $(git config branch.$line.description)
+  # Show description
+  local desc="${branch_descriptions[$line]}"
+  if [[ -n "$desc" ]]; then
+    echo " $desc"
+  else
+    echo ""
+  fi
 done
