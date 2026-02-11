@@ -102,6 +102,7 @@ alias cdr='claude --dangerously-skip-permissions'
 alias ccdr='claude --continue --dangerously-skip-permissions'
 alias pp='pnpm'
 alias label-deploy-peach='make label-deploy/stg-peach'
+alias label-deploy-apple='make label-deploy/stg-apple'
 
 source ~/dotfiles/scripts/update-types.sh
 alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
@@ -120,8 +121,9 @@ wr() {
   local name="$1"
   [[ -z "$name" ]] && { echo "Usage: wr <worktree-dir-name>"; return 1; }
 
-  local git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null) || { echo "Not in a git repo"; return 1; }
-  local original_repo=$(cd "$git_common_dir" && cd .. && pwd)
+  local git_common_dir=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || { echo "Not in a git repo"; return 1; }
+  [[ -z "$git_common_dir" ]] && { echo "Not in a git repo"; return 1; }
+  local original_repo=$(dirname "$git_common_dir")
   local parent_dir=$(dirname "$original_repo")
   local worktree_path="$parent_dir/$name"
 
@@ -134,8 +136,9 @@ wr() {
   git worktree remove "$worktree_path"
 }
 _wr() {
-  local git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null) || return
-  local original_repo=$(cd "$git_common_dir" && cd .. && pwd)
+  local git_common_dir=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || return
+  [[ -z "$git_common_dir" ]] && return
+  local original_repo=$(dirname "$git_common_dir")
   local base_name=${original_repo:t}
 
   local -a worktrees
