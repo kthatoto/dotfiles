@@ -169,9 +169,10 @@ for line in "${sorted_branches[@]}"; do
     wt_display_len=$((${#worktree_map[$line]} + 3))
   fi
   # Pad to align descriptions
-  for i in $(seq $wt_display_len $((worktree_length_max - 1))); do
-    echo -n " "
-  done
+  local pad_count=$((worktree_length_max - wt_display_len))
+  if [[ $pad_count -gt 0 ]]; then
+    printf "%${pad_count}s" ""
+  fi
 
   # Show description
   local desc="${branch_descriptions[$line]}"
