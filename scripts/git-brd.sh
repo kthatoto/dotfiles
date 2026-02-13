@@ -8,8 +8,17 @@ if ! command -v fzf &> /dev/null; then
   exit 1
 fi
 
+# Show loading spinner
+local spinner=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+local spin_idx=0
+spin() {
+  printf "\r${spinner[$((spin_idx % 10 + 1))]}"
+  spin_idx=$((spin_idx + 1))
+}
+spin
+
 local branches=($(git branch --format='%(refname:short)'))
-local current_branch=$(git branch --contains | grep '*' | awk '{print $2}')
+local current_branch=$(git branch --show-current)
 
 # Get worktree information
 typeset -A worktree_map
@@ -34,103 +43,182 @@ while IFS= read -r wt_line; do
   fi
 done <<< "$worktree_info"
 
+# Check if develop branch exists
+local develop_exists=$(git rev-parse --verify --quiet develop 2>/dev/null && echo "yes")
+
+# Get branches merged to develop
+typeset -A merged_to_develop
+if [[ -n "$develop_exists" ]]; then
+  for b in $(git branch --merged develop 2>/dev/null | sed 's/^[* ]*//'); do
+    merged_to_develop[$b]="yes"
+  done
+fi
+
+# Pre-calculate all data in one pass
+typeset -A branch_descriptions
+typeset -A branch_groups
+typeset -A origin_counts
+typeset -A commits_behind_map
+typeset -A is_merged_map
+
 local count_length_max=0
 local branch_length_max=0
-local develop_not_merged_exists=false
-for line in "${branches[@]}"; do
-  local count_length=0
-  if git rev-parse --verify --quiet origin/$line > /dev/null; then
-    local count=$(git rev-list --count origin/$line..$line)
-    count_length=$((${#count} + 2))
+local worktree_length_max=0
+
+for branch in "${branches[@]}"; do
+  spin
+
+  # Description
+  local desc=$(git config branch."$branch".description 2>/dev/null)
+  branch_descriptions[$branch]="$desc"
+  if [[ "$desc" == *-* ]]; then
+    branch_groups[$branch]="${desc%-*}"
+  else
+    branch_groups[$branch]="$desc"
   fi
 
-  if [[ $count_length_max -lt $count_length ]]; then
-    count_length_max=$count_length
+  # Origin count
+  if git rev-parse --verify --quiet origin/$branch > /dev/null 2>&1; then
+    local cnt=$(git rev-list --count origin/$branch..$branch)
+    origin_counts[$branch]="$cnt"
+    local count_length=$((${#cnt} + 2))
+    [[ $count_length_max -lt $count_length ]] && count_length_max=$count_length
   fi
 
-  if [[ $branch_length_max -lt ${#line} ]]; then
-    branch_length_max=${#line}
+  # Branch name length
+  [[ $branch_length_max -lt ${#branch} ]] && branch_length_max=${#branch}
+
+  # Worktree length
+  if [[ -n "${worktree_map[$branch]}" ]]; then
+    local wt_len=$((${#worktree_map[$branch]} + 3))
+    [[ $worktree_length_max -lt $wt_len ]] && worktree_length_max=$wt_len
   fi
 
-  local develop_merged=$(git branch --merged $line | awk '{print $1}' | grep '^develop$')
-  if [[ -z "$develop_exists" ]]; then
-    develop_not_merged_exists=true
+  # Develop comparison
+  if [[ -n "$develop_exists" && "$branch" != "develop" ]]; then
+    local behind=$(git rev-list --count $branch..develop 2>/dev/null)
+    commits_behind_map[$branch]="$behind"
+    local merge_base=$(git merge-base $branch develop 2>/dev/null)
+    local branch_head=$(git rev-parse $branch 2>/dev/null)
+    if [[ "$merge_base" == "$branch_head" ]]; then
+      if [[ "$behind" -gt 0 ]]; then
+        is_merged_map[$branch]="merged"
+      else
+        is_merged_map[$branch]="new"
+      fi
+    elif [[ -n "${merged_to_develop[$branch]}" ]]; then
+      is_merged_map[$branch]="merged"
+    fi
   fi
 done
 
-local sorted_branches=($(for branch in "${branches[@]}"; do
-  local description=$(git config branch."$branch".description 2>/dev/null)
-  echo "$description $branch"
-done | sort | awk '{print $NF}'))
+# Clear loading spinner
+printf "\r\033[K"
 
-# Build branch list with formatting (same as git-br.sh)
+# Sort branches
+local sorted_branches=($(for branch in "${branches[@]}"; do
+  echo "${branch_groups[$branch]}	${branch_descriptions[$branch]}	$branch"
+done | sort | cut -f3))
+
+# Build branch line for display
 build_branch_line() {
   local line=$1
   local output=""
+  local group="${branch_groups[$line]}"
 
+  # Current branch marker
   if [[ $line == $current_branch ]]; then
     output+="*"
   else
     output+=" "
   fi
 
-  local count=0
-  local count_length=0
-  if git rev-parse --verify --quiet origin/$line > /dev/null; then
-    count=$(git rev-list --count origin/$line..$line)
-    count_length=$((${#count} + 2))
-  fi
-  for i in $(seq $((${#count} + 2)) $count_length_max); do
-    output+=" "
-  done
+  # Origin count
+  local count="${origin_counts[$line]}"
+  local total_width=$((count_length_max + 1))
+  [[ $total_width -lt 4 ]] && total_width=4
+
   if [ $line = "develop" ]; then
-    output+="\e[30m[0]\e[0m "
-  elif [[ $count_length -gt 0 ]]; then
+    local str="[0]"
+    local pad=$((total_width - 3))
+    output+="\e[30m${str}\e[0m$(printf "%${pad}s" "")"
+  elif [[ -n "$count" ]]; then
+    local str="[$count]"
+    local pad=$((total_width - ${#str}))
     if [[ $count -eq 0 ]]; then
-      output+="[$count] "
+      output+="${str}$(printf "%${pad}s" "")"
     else
-      output+="\e[31m[$count]\e[0m "
+      output+="\e[31m${str}\e[0m$(printf "%${pad}s" "")"
     fi
   else
-    output+="    "
+    output+="$(printf "%${total_width}s" "")"
   fi
 
-  if [[ -n "$develop_not_merged_exists" ]]; then
-    local merged_to_develop=$(git branch --contains $line | awk '{print $1}' | grep '^develop$')
-    local develop_merged=$(git branch --merged $line | awk '{print $1}' | grep '^develop$')
+  # Dot indicator
+  if [[ -n "$develop_exists" ]]; then
     if [ $line = "develop" ]; then
       output+="  "
-    elif [[ -n "$merged_to_develop" ]]; then
-      output+="\e[32m•\e[0m "
-    elif [[ -z "$develop_merged" ]]; then
-      output+="\e[31m•\e[0m "
     else
-      output+="  "
+      local merge_status="${is_merged_map[$line]}"
+      local commits_behind="${commits_behind_map[$line]:-0}"
+
+      if [[ "$merge_status" == "merged" ]]; then
+        output+="\e[32m•\e[0m "
+      elif [[ "$merge_status" == "new" ]]; then
+        output+="\e[34m•\e[0m "
+      elif [[ $commits_behind -gt 0 ]]; then
+        output+="\e[31m•\e[0m "
+      else
+        output+="  "
+      fi
     fi
+  else
+    output+="  "
   fi
 
+  # Branch name
   if [[ $line == $current_branch ]]; then
     output+="\e[32m$line\e[0m"
   else
     output+="$line"
   fi
 
-  for i in $(seq $((${#line} - 1)) $branch_length_max); do
-    output+=" "
-  done
+  # Branch name padding
+  local branch_pad=$((branch_length_max - ${#line} + 1))
+  output+="$(printf "%${branch_pad}s" "")"
 
+  # Worktree indicator
+  local wt_display_len=0
   if [[ -n "${worktree_map[$line]}" ]]; then
     local color="${worktree_color[$line]}"
-    output+=" \e[${color}m[${worktree_map[$line]}]\e[0m "
+    output+=" \e[${color}m[${worktree_map[$line]}]\e[0m"
+    wt_display_len=$((${#worktree_map[$line]} + 3))
   fi
 
-  output+="$(git config branch.$line.description)"
+  # Worktree padding
+  local wt_pad=$((worktree_length_max - wt_display_len))
+  [[ $wt_pad -gt 0 ]] && output+="$(printf "%${wt_pad}s" "")"
+
+  # Description
+  local desc="${branch_descriptions[$line]}"
+  if [[ -n "$desc" ]]; then
+    output+=" $desc"
+  fi
+
   echo -e "$output"
 }
 
-# Generate fzf input (same order as git br)
+# Generate fzf input with group headers
 local fzf_input=""
+local prev_group=""
 for line in "${sorted_branches[@]}"; do
+  local group="${branch_groups[$line]}"
+  if [[ "$group" != "$prev_group" && -n "$group" ]]; then
+    fzf_input+="── $group ──\n"
+    prev_group="$group"
+  elif [[ "$group" != "$prev_group" ]]; then
+    prev_group="$group"
+  fi
   fzf_input+="$(build_branch_line $line)\n"
 done
 
@@ -140,10 +228,6 @@ if [[ -z "$fzf_input" ]]; then
 fi
 
 # Run fzf for multi-select
-# - reverse layout (top)
-# - j/k for navigation
-# - enter to toggle selection
-# - ctrl-d to proceed to deletion
 local selected=$(echo -e "$fzf_input" | fzf \
   --ansi \
   --multi \
@@ -161,6 +245,10 @@ fi
 # Extract branch names from selected lines
 local selected_branches=()
 while IFS= read -r sel_line; do
+  # Skip group headers
+  if [[ "$sel_line" =~ ^──.*──$ ]]; then
+    continue
+  fi
   # Remove ANSI codes and extract branch name
   local clean_line=$(echo "$sel_line" | sed 's/\x1b\[[0-9;]*m//g')
   # Parse: skip *, skip [n], skip dot, get first word that looks like a branch
@@ -183,7 +271,7 @@ if [[ ${#selected_branches[@]} -eq 0 ]]; then
   exit 0
 fi
 
-# Show selected branches and confirm (git br style)
+# Show selected branches and confirm
 echo ""
 echo "Branches to delete:"
 echo ""

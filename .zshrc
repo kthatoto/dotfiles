@@ -153,7 +153,22 @@ ch() {
     force=true
   fi
 
-  local branch=$(git-br-list | peco | sed "s/^\* //" | awk "{print \$1}")
+  local selected=$(git-br-list | fzf \
+    --ansi \
+    --layout=reverse \
+    --bind='j:down,k:up' \
+    --header=$'j/k: move | ENTER: select')
+
+  [[ -z "$selected" ]] && return
+
+  local branch=$(echo "$selected" | sed 's/\x1b\[[0-9;]*m//g' | awk '{
+    for (i=1; i<=NF; i++) {
+      if ($i != "" && $i != "*" && $i != "•") {
+        print $i
+        exit
+      }
+    }
+  }')
   [[ -z "$branch" ]] && return
 
   local worktree_path=$(git worktree list | grep "\[$branch\]" | awk "{print \$1}")
@@ -251,13 +266,7 @@ rspec-select-interactive() {
 
 git-br-list() {
   local branches=($(git branch --format='%(refname:short)'))
-  local current_branch=$(git branch --contains | awk '{print $2}')
-  local max=0
-  for line in "${branches[@]}"; do
-    if [[ $max -lt ${#line} ]]; then
-      max=${#line}
-    fi
-  done
+  local current_branch=$(git branch --show-current)
 
   # Get worktree information
   typeset -A worktree_map
@@ -271,22 +280,73 @@ git-br-list() {
       local wt_branch="${match[1]}"
       local wt_name="${wt_path##*/}"
       worktree_map[$wt_branch]="$wt_name"
-      # 色を決定: -a, -b, -c... → 固定色、それ以外 → 白(37)
-      local wt_colors=(31 34 33 32 35 36 91 94 93 92 95 96)  # a b c d e f g h i j k l
+      local wt_colors=(31 34 33 32 35 36 91 94 93 92 95 96)
       if [[ "$wt_name" =~ -([a-z])$ ]]; then
         local suffix="${match[1]}"
-        local idx=$(( $(printf '%d' "'$suffix") - 96 ))  # a=1, b=2, ...
+        local idx=$(( $(printf '%d' "'$suffix") - 96 ))
         worktree_color[$wt_branch]="${wt_colors[$idx]}"
       else
-        worktree_color[$wt_branch]="37"  # 白
+        worktree_color[$wt_branch]="37"
       fi
     fi
   done <<< "$worktree_info"
 
+  # Check if develop branch exists
+  local develop_exists=$(git rev-parse --verify --quiet develop 2>/dev/null && echo "yes")
+
+  # Get branches merged to develop
+  typeset -A merged_to_develop
+  if [[ -n "$develop_exists" ]]; then
+    for b in $(git branch --merged develop 2>/dev/null | sed 's/^[* ]*//'); do
+      merged_to_develop[$b]="yes"
+    done
+  fi
+
+  # Pre-calculate all data
+  typeset -A branch_descriptions
+  typeset -A branch_groups
+  typeset -A commits_behind_map
+  typeset -A is_merged_map
+
+  local branch_length_max=0
+  local worktree_length_max=0
+
+  for branch in "${branches[@]}"; do
+    local desc=$(git config branch."$branch".description 2>/dev/null)
+    branch_descriptions[$branch]="$desc"
+    if [[ "$desc" == *-* ]]; then
+      branch_groups[$branch]="${desc%-*}"
+    else
+      branch_groups[$branch]="$desc"
+    fi
+
+    [[ $branch_length_max -lt ${#branch} ]] && branch_length_max=${#branch}
+
+    if [[ -n "${worktree_map[$branch]}" ]]; then
+      local wt_len=$((${#worktree_map[$branch]} + 3))
+      [[ $worktree_length_max -lt $wt_len ]] && worktree_length_max=$wt_len
+    fi
+
+    if [[ -n "$develop_exists" && "$branch" != "develop" ]]; then
+      local behind=$(git rev-list --count $branch..develop 2>/dev/null)
+      commits_behind_map[$branch]="$behind"
+      local merge_base=$(git merge-base $branch develop 2>/dev/null)
+      local branch_head=$(git rev-parse $branch 2>/dev/null)
+      if [[ "$merge_base" == "$branch_head" ]]; then
+        if [[ "$behind" -gt 0 ]]; then
+          is_merged_map[$branch]="merged"
+        else
+          is_merged_map[$branch]="new"
+        fi
+      elif [[ -n "${merged_to_develop[$branch]}" ]]; then
+        is_merged_map[$branch]="merged"
+      fi
+    fi
+  done
+
   local sorted_branches=($(for branch in "${branches[@]}"; do
-    description=$(git config branch."$branch".description 2>/dev/null)
-    echo "$description $branch"
-  done | sort | awk '{print $NF}'))
+    echo "${branch_groups[$branch]}	${branch_descriptions[$branch]}	$branch"
+  done | sort | cut -f3))
 
   for line in "${sorted_branches[@]}"; do
     if [[ $line == $current_branch ]]; then
@@ -294,18 +354,50 @@ git-br-list() {
     else
       echo -n "  "
     fi
-    echo -n $line
-    for i in $(seq $((${#line} - 1)) $max); do
-      echo -n " "
-    done
 
-    # Show worktree indicator if branch is checked out in another worktree
-    if [[ -n "${worktree_map[$line]}" ]]; then
-      local color="${worktree_color[$line]}"
-      echo -n " \e[${color}m[${worktree_map[$line]}]\e[0m "
+    # Dot indicator
+    if [[ -n "$develop_exists" ]]; then
+      if [ $line = "develop" ]; then
+        echo -n "  "
+      else
+        local merge_status="${is_merged_map[$line]}"
+        local commits_behind="${commits_behind_map[$line]:-0}"
+        if [[ "$merge_status" == "merged" ]]; then
+          echo -n "\e[32m•\e[0m "
+        elif [[ "$merge_status" == "new" ]]; then
+          echo -n "\e[34m•\e[0m "
+        elif [[ $commits_behind -gt 0 ]]; then
+          echo -n "\e[31m•\e[0m "
+        else
+          echo -n "  "
+        fi
+      fi
+    else
+      echo -n "  "
     fi
 
-    echo $(git config branch.$line.description)
+    echo -n $line
+
+    local branch_pad=$((branch_length_max - ${#line} + 1))
+    printf "%${branch_pad}s" ""
+
+    # Show worktree indicator
+    local wt_display_len=0
+    if [[ -n "${worktree_map[$line]}" ]]; then
+      local color="${worktree_color[$line]}"
+      echo -n " \e[${color}m[${worktree_map[$line]}]\e[0m"
+      wt_display_len=$((${#worktree_map[$line]} + 3))
+    fi
+
+    local wt_pad=$((worktree_length_max - wt_display_len))
+    [[ $wt_pad -gt 0 ]] && printf "%${wt_pad}s" ""
+
+    local desc="${branch_descriptions[$line]}"
+    if [[ -n "$desc" ]]; then
+      echo " $desc"
+    else
+      echo ""
+    fi
   done
 }
 search-find() {

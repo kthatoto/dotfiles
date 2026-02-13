@@ -43,6 +43,14 @@ done <<< "$worktree_info"
 # Check if develop branch exists
 local develop_exists=$(git rev-parse --verify --quiet develop 2>/dev/null && echo "yes")
 
+# Get branches merged to develop
+typeset -A merged_to_develop
+if [[ -n "$develop_exists" ]]; then
+  for b in $(git branch --merged develop 2>/dev/null | sed 's/^[* ]*//'); do
+    merged_to_develop[$b]="yes"
+  done
+fi
+
 # Pre-calculate all data in one pass
 typeset -A branch_descriptions
 typeset -A branch_groups
@@ -86,10 +94,21 @@ for branch in "${branches[@]}"; do
 
   # Develop comparison
   if [[ -n "$develop_exists" && "$branch" != "develop" ]]; then
-    commits_ahead_map[$branch]=$(git rev-list --count develop..$branch 2>/dev/null)
-    commits_behind_map[$branch]=$(git rev-list --count $branch..develop 2>/dev/null)
-    if git merge-base --is-ancestor $branch develop 2>/dev/null; then
-      is_merged_map[$branch]="yes"
+    local behind=$(git rev-list --count $branch..develop 2>/dev/null)
+    commits_behind_map[$branch]="$behind"
+    local merge_base=$(git merge-base $branch develop 2>/dev/null)
+    local branch_head=$(git rev-parse $branch 2>/dev/null)
+    if [[ "$merge_base" == "$branch_head" ]]; then
+      if [[ "$behind" -gt 0 ]]; then
+        # マージ済み（squash merge後developが進んだ）
+        is_merged_map[$branch]="merged"
+      else
+        # 作ったばかり（独自コミットなし）
+        is_merged_map[$branch]="new"
+      fi
+    elif [[ -n "${merged_to_develop[$branch]}" ]]; then
+      # マージ済み
+      is_merged_map[$branch]="merged"
     fi
   fi
 done
@@ -150,13 +169,13 @@ for line in "${sorted_branches[@]}"; do
     if [ $line = "develop" ]; then
       output+="  "
     else
-      local commits_ahead="${commits_ahead_map[$line]:-0}"
+      local merge_status="${is_merged_map[$line]}"
       local commits_behind="${commits_behind_map[$line]:-0}"
 
-      if [[ $commits_ahead -eq 0 ]]; then
-        output+="\e[34m•\e[0m "
-      elif [[ -n "${is_merged_map[$line]}" ]]; then
+      if [[ "$merge_status" == "merged" ]]; then
         output+="\e[32m•\e[0m "
+      elif [[ "$merge_status" == "new" ]]; then
+        output+="\e[34m•\e[0m "
       elif [[ $commits_behind -gt 0 ]]; then
         output+="\e[31m•\e[0m "
       else
