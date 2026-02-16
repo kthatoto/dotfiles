@@ -161,6 +161,12 @@ ch() {
 
   [[ -z "$selected" ]] && return
 
+  # Skip group headers
+  if [[ "$selected" =~ ^.*──.*──.*$ ]]; then
+    echo "Group header selected, please select a branch."
+    return
+  fi
+
   local branch=$(echo "$selected" | sed 's/\x1b\[[0-9;]*m//g' | awk '{
     for (i=1; i<=NF; i++) {
       if ($i != "" && $i != "*" && $i != "•") {
@@ -348,7 +354,18 @@ git-br-list() {
     echo "${branch_groups[$branch]}	${branch_descriptions[$branch]}	$branch"
   done | sort | cut -f3))
 
+  local prev_group=""
   for line in "${sorted_branches[@]}"; do
+    local group="${branch_groups[$line]}"
+
+    # Group header
+    if [[ "$group" != "$prev_group" && -n "$group" ]]; then
+      echo "\e[33m── $group ──\e[0m"
+      prev_group="$group"
+    elif [[ "$group" != "$prev_group" ]]; then
+      prev_group="$group"
+    fi
+
     if [[ $line == $current_branch ]]; then
       echo -n "* "
     else
