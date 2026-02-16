@@ -153,11 +153,15 @@ ch() {
     force=true
   fi
 
+  local current_branch=$(git branch --show-current)
+  local current_worktree=$(basename "$(pwd)")
+  local header_info="[$current_worktree] $current_branch"
+
   local selected=$(git-br-list | fzf \
     --ansi \
     --layout=reverse \
     --bind='j:down,k:up' \
-    --header=$'j/k: move | ENTER: select')
+    --header="$header_info | j/k: move | ENTER: select")
 
   [[ -z "$selected" ]] && return
 
