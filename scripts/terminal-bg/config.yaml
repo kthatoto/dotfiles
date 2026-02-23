@@ -1,9 +1,30 @@
-default: "#1d1e20"
+# terminal-bg 設定ファイル
+# 各リポジトリの背景色・背景画像を定義
+
+default:
+  color: "#1d1e20"
+  image: null
 
 repos:
-  rakushifu: "#1e1e3f"
-  communication: "#1e3f2f"
-  vibe-tree: "#3f1e2f"
+  rakushifu:
+    color: "#1e1e3f"
+    image: null
+  rakushifu-a:
+    color: "#1e1e3f"
+    image: "~/dotfiles/scripts/terminal-bg/patterns/rakushifu-a.png"
+  rakushifu-b:
+    color: "#1e1e3f"
+    image: "~/dotfiles/scripts/terminal-bg/patterns/rakushifu-b.png"
+  rakushifu-c:
+    color: "#1e1e3f"
+    image: "~/dotfiles/scripts/terminal-bg/patterns/rakushifu-c.png"
+  communication:
+    color: "#1e3f2f"
+    image: null
+  vibe-tree:
+    color: "#3f1e2f"
+    image: null
 
-# リポジトリルートにこのファイルがあれば最優先
+# リポジトリルートにこのファイルがあれば色を最優先で上書き
+# ファイル内容: #RRGGBB のみ（改行あり可）
 per_repo_file: ".terminal-bg"
