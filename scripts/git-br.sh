@@ -99,15 +99,10 @@ for branch in "${branches[@]}"; do
     local merge_base=$(git merge-base $branch develop 2>/dev/null)
     local branch_head=$(git rev-parse $branch 2>/dev/null)
     if [[ "$merge_base" == "$branch_head" ]]; then
-      if [[ "$behind" -gt 0 ]]; then
-        # マージ済み（squash merge後developが進んだ）
-        is_merged_map[$branch]="merged"
-      else
-        # 作ったばかり（独自コミットなし）
-        is_merged_map[$branch]="new"
-      fi
+      # developのライン上にいる = 独自コミットなし = 青
+      is_merged_map[$branch]="new"
     elif [[ -n "${merged_to_develop[$branch]}" ]]; then
-      # マージ済み
+      # 独自コミットがあり、developにマージ済み = 緑
       is_merged_map[$branch]="merged"
     fi
   fi
