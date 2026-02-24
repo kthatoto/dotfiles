@@ -101,8 +101,14 @@ for branch in "${branches[@]}"; do
     local merge_base=$(git merge-base $branch develop 2>/dev/null)
     local branch_head=$(git rev-parse $branch 2>/dev/null)
     if [[ "$merge_base" == "$branch_head" ]]; then
-      # developのライン上にいる = 独自コミットなし = 青
-      is_merged_map[$branch]="new"
+      # developのライン上にいる
+      if git reflog show $branch 2>/dev/null | grep -q "commit:"; then
+        # 過去にコミットしてマージ済み = 緑
+        is_merged_map[$branch]="merged"
+      else
+        # コミットしたことがない = 青
+        is_merged_map[$branch]="new"
+      fi
     elif [[ -n "${merged_to_develop[$branch]}" ]]; then
       # 独自コミットがあり、developにマージ済み = 緑
       is_merged_map[$branch]="merged"
