@@ -40,6 +40,13 @@ while IFS= read -r wt_line; do
   fi
 done <<< "$worktree_info"
 
+# Get GitHub repo URL for PR links
+local github_repo_url=""
+local remote_url=$(git remote get-url origin 2>/dev/null)
+if [[ "$remote_url" =~ github\.com[:/]([^/]+/[^/.]+) ]]; then
+  github_repo_url="https://github.com/${match[1]}"
+fi
+
 # Check if develop branch exists
 local develop_exists=$(git rev-parse --verify --quiet develop 2>/dev/null && echo "yes")
 
@@ -213,6 +220,12 @@ for line in "${sorted_branches[@]}"; do
   # Description
   local desc="${branch_descriptions[$line]}"
   if [[ -n "$desc" ]]; then
+    # Make #NNNNN into clickable PR links (OSC 8 hyperlinks)
+    if [[ -n "$github_repo_url" ]]; then
+      local esc=$'\e'
+      local bel=$'\a'
+      desc=$(echo "$desc" | sed -E "s|#([0-9]+)|${esc}]8;;${github_repo_url}/pull/\1${bel}#\1${esc}]8;;${bel}|g")
+    fi
     output+=" $desc"
   fi
   output+="\n"

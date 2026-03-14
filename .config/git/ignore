@@ -9,3 +9,4 @@ Session.vim
 .claude/**/*
 CLAUDE.local.md
 .serena
+.git-hooks-empty
