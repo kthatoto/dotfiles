@@ -24,6 +24,9 @@ repos:
   vibe-tree:
     color: "#3f1e2f"
     image: null
+  xbit-common-app:
+    color: "#1e3f1e"
+    image: "~/dotfiles/scripts/terminal-bg/patterns/xbit-common-app.png"
 
 # リポジトリルートにこのファイルがあれば色を最優先で上書き
 # ファイル内容: #RRGGBB のみ（改行あり可）
