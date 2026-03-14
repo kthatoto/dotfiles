@@ -27,6 +27,12 @@ repos:
   xbit-common-app:
     color: "#1e3f1e"
     image: "~/dotfiles/scripts/terminal-bg/patterns/xbit-common-app.png"
+  cloud-claude-code:
+    color: "#3f2a1e"
+    image: null
+  accord:
+    color: "#1e3f3f"
+    image: null
 
 # リポジトリルートにこのファイルがあれば色を最優先で上書き
 # ファイル内容: #RRGGBB のみ（改行あり可）
