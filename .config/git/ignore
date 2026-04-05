@@ -3,10 +3,12 @@ Session.vim
 .envrc
 .tool-versions
 .env
-.aider*
 
 **/.claude/settings.local.json
 .claude/**/*
 CLAUDE.local.md
 .serena
 .git-hooks-empty
+.playwright-mcp
+.aidlc-rule-details/
+.takt

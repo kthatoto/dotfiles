@@ -106,6 +106,7 @@ alias label-deploy-apple='make label-deploy/stg-apple'
 
 source ~/dotfiles/scripts/update-types.sh
 alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
+alias chrome='"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --remote-debugging-port=9222 --user-data-dir="$HOME/.chrome-debug" &'
 
 wt() {
   ~/dotfiles/scripts/worktree-sync "$@"
@@ -434,6 +435,9 @@ export PATH="/usr/local/bin:$PATH"
 
 # for uv / aider
 export PATH="/Users/kthatoto/.local/bin:$PATH"
+
+# browser-use
+export PATH="/Users/kthatoto/.browser-use-env/bin:$PATH"
 
 BREW_PREFIX=$(brew --prefix)
 export LDFLAGS="-L${BREW_PREFIX}/opt/openssl/lib -L${BREW_PREFIX}/lib"
