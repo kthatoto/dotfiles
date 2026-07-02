@@ -36,6 +36,12 @@ repos:
   home:
     color: "#2f1e3f"
     image: null
+  rakushifu-forcast-be:
+    color: "#1e3f5f"
+    image: null
+  rakushifu-forcast-fe:
+    color: "#1e3f5f"
+    image: null
 
 # リポジトリルートにこのファイルがあれば色を最優先で上書き
 # ファイル内容: #RRGGBB のみ（改行あり可）
