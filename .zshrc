@@ -57,6 +57,7 @@ alias jjjj='cd ../../..'
 alias o='open .'
 alias ls='ls -alG'
 alias vi='nvim'
+export EDITOR='nvim'
 
 alias docker-prune='docker system prune -f'
 
@@ -102,7 +103,8 @@ alias cdr='claude --dangerously-skip-permissions'
 alias ccdr='claude --continue --dangerously-skip-permissions'
 alias pp='pnpm'
 alias label-deploy-peach='make label-deploy/stg-peach'
-alias label-deploy-apple='make label-deploy/stg-apple'
+alias sleep-no='sudo pmset -a disablesleep 1'
+alias sleep-yes='sudo pmset -a disablesleep 0'
 
 source ~/dotfiles/scripts/update-types.sh
 alias pr-tp="~/dotfiles/scripts/pr-tp.sh"
@@ -479,7 +481,7 @@ _git-br() { _git-branch "$@" }
 export PATH="$PATH:$HOME/.bun/bin"
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 
-source ~/completion-for-pnpm.bash
+source "$HOME/dotfiles/scripts/completion-for-pnpm.bash"
 
 # bun completions
 [ -s "/Users/kthatoto/.bun/_bun" ] && source "/Users/kthatoto/.bun/_bun"
