@@ -36,10 +36,7 @@ repos:
   home:
     color: "#2f1e3f"
     image: null
-  rakushifu-forcast-be:
-    color: "#1e3f5f"
-    image: null
-  rakushifu-forcast-fe:
+  rakushifu-forecast:
     color: "#1e3f5f"
     image: null
 
