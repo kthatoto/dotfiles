@@ -1,0 +1,26 @@
+# Codex に共有しない skill 名 / コマンド名（1行1つ、# はコメント）
+# Claude Code 固有のツール・MCP・機構に依存していて Codex では動かないもの。
+# sync.sh はここに書かれたものの symlink を張らない。コマンドは拡張子なしで書く。
+
+# /compact など Claude Code のコンテキスト操作が本体
+compact-continue
+strategic-compact
+
+# ~/.claude 配下の設定・skill そのものを監査／掃除する
+config-gc
+skill-stocktake
+
+# Claude 固有 MCP に依存
+attach-screenshot-to-pr   # mcp__claude-in-chrome__*
+slack-ask                 # mcp__plugin_slack_slack__*
+
+# Claude Code 固有の成果物・機構が前提
+fable-prompt-writer       # Claude Fable 向けプロンプト生成
+codebase-onboarding       # CLAUDE.md 生成 + Artifact
+search-first              # researcher subagent への委譲が前提
+
+# --- コマンド（~/.claude/commands/） ---
+# ~/.claude/session-data/ と Claude Code のセッション機構が前提
+save-session
+resume-session
+sessions

@@ -7,7 +7,7 @@ Claude Code と Codex CLI で指示ファイル・skills・コマンドを共有
 ```
 ~/dotfiles/ai/
   AGENTS.md               共通指示（実体）
-  skills-claude-only.txt  Codex に共有しない skill 名リスト
+  claude-only.txt         Codex に共有しない skill / コマンド名リスト
   sync.sh                 symlink を張り直す（冪等）
   README.md
 ```
@@ -33,8 +33,10 @@ skill やコマンドを追加・削除・リネームしたら:
 ~/dotfiles/ai/sync.sh
 ```
 
-Codex 用に共有したくない skill（Claude Code 固有のツールや MCP に依存するもの）は
-`skills-claude-only.txt` に名前を1行ずつ書く。
+Codex 用に共有したくない skill / コマンド（Claude Code 固有のツールや MCP に依存するもの）は
+`claude-only.txt` に名前を1行ずつ書く。コマンドは拡張子なしで書く。
+
+現状の共有数: skills 22/31、コマンド 2/5。
 
 ## 共有していないもの
 

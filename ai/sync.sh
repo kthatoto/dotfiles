@@ -7,7 +7,7 @@ AI_DIR="$HOME/dotfiles/ai"
 CLAUDE_DIR="$HOME/.claude"
 CODEX_DIR="$HOME/.codex"
 AGENTS_SKILLS="$HOME/.agents/skills"
-EXCLUDE_FILE="$AI_DIR/skills-claude-only.txt"
+EXCLUDE_FILE="$AI_DIR/claude-only.txt"
 
 log() { printf '%s\n' "$*"; }
 
@@ -68,11 +68,17 @@ for link in "$CODEX_DIR"/prompts/*; do
   [[ -L "$link" ]] && rm "$link"
 done
 cmds=0
+cmds_skipped=0
 for f in "$CLAUDE_DIR"/commands/*.md; do
+  name="$(basename "$f" .md)"
+  if is_excluded "$name"; then
+    cmds_skipped=$((cmds_skipped + 1))
+    continue
+  fi
   ln -sfn "$f" "$CODEX_DIR/prompts/$(basename "$f")"
   cmds=$((cmds + 1))
 done
-log "prompts -> $cmds linked"
+log "prompts -> $cmds linked, $cmds_skipped claude-only"
 shopt -u nullglob
 
 log ""
