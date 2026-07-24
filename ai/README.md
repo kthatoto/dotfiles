@@ -36,7 +36,7 @@ skill やコマンドを追加・削除・リネームしたら:
 Codex 用に共有したくない skill / コマンド（Claude Code 固有のツールや MCP に依存するもの）は
 `claude-only.txt` に名前を1行ずつ書く。コマンドは拡張子なしで書く。
 
-現状の共有数: skills 22/31、コマンド 2/5。
+現状の共有数: skills 21/31、コマンド 2/5。
 
 ## 共有していないもの
 
@@ -56,9 +56,10 @@ Codex 側は `codex mcp add` で登録済み。確認は `codex mcp list`。
 
 未登録:
 
-- `vibe-tree` — Claude Code 連携前提のため見送り
 - `figma-full` — トークン直書き & プロジェクト固有のため見送り
 - Slack / Gmail / Calendar / claude-in-chrome / computer-use — Claude Code 固有で移植不可
+
+vibe-tree は Claude 側からも削除済み（2026-07-24、未使用のため）。
 
 追加するとき:
 

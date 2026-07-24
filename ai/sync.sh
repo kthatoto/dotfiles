@@ -10,6 +10,12 @@ AGENTS_SKILLS="$HOME/.agents/skills"
 EXCLUDE_FILE="$AI_DIR/claude-only.txt"
 
 log() { printf '%s\n' "$*"; }
+die() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
+
+# フェイルセーフ: ソースが見えない状態で実行すると既存リンクを消すだけになるので先に検査する
+[[ -f "$EXCLUDE_FILE" ]] || die "claude-only.txt が見つからない: $EXCLUDE_FILE"
+compgen -G "$CLAUDE_DIR/skills/*/SKILL.md" > /dev/null || die "~/.claude/skills に skill が見つからない"
+compgen -G "$CLAUDE_DIR/commands/*.md" > /dev/null || die "~/.claude/commands にコマンドが見つからない"
 
 # 1. 共通指示ファイル: ~/.codex/AGENTS.md -> dotfiles/ai/AGENTS.md
 #    （Claude Code 側は ~/.claude/CLAUDE.md が @import で読み込む）
@@ -22,28 +28,30 @@ log "AGENTS.md -> linked"
 #    内部ファイルを書くため、丸ごと symlink すると Codex 側が壊れる）
 mkdir -p "$AGENTS_SKILLS"
 
-# 除外リスト読み込み
 exclude=()
-if [[ -f "$EXCLUDE_FILE" ]]; then
-  while IFS= read -r line; do
-    line="${line%%#*}"
-    line="$(printf '%s' "$line" | tr -d '[:space:]')"
-    [[ -n "$line" ]] && exclude+=("$line")
-  done < "$EXCLUDE_FILE"
-fi
+while IFS= read -r line; do
+  line="${line%%#*}"
+  line="$(printf '%s' "$line" | tr -d '[:space:]')"
+  [[ -n "$line" ]] && exclude+=("$line")
+done < "$EXCLUDE_FILE"
 
+matched=" "
 is_excluded() {
   local name="$1"
   for e in "${exclude[@]+"${exclude[@]}"}"; do
-    [[ "$e" == "$name" ]] && return 0
+    if [[ "$e" == "$name" ]]; then
+      matched+="$name "
+      return 0
+    fi
   done
   return 1
 }
 
-# 既存の symlink を掃除（実体ディレクトリには触らない）
+# 既存 symlink の掃除は自分が張ったもの（リンク先が ~/.claude 配下）に限定する。
+# 他ツールが置いた実体ディレクトリ・無関係な symlink には触らない。
 shopt -s nullglob
 for link in "$AGENTS_SKILLS"/*; do
-  [[ -L "$link" ]] && rm "$link"
+  [[ -L "$link" && "$(readlink "$link")" == "$CLAUDE_DIR/skills/"* ]] && rm "$link"
 done
 
 linked=0
@@ -56,6 +64,10 @@ for dir in "$CLAUDE_DIR"/skills/*/; do
     skipped=$((skipped + 1))
     continue
   fi
+  if [[ -e "$AGENTS_SKILLS/$name" && ! -L "$AGENTS_SKILLS/$name" ]]; then
+    log "WARN: $AGENTS_SKILLS/$name は実体ディレクトリのためスキップ（他ツール由来？）"
+    continue
+  fi
   ln -sfn "${dir%/}" "$AGENTS_SKILLS/$name"
   linked=$((linked + 1))
 done
@@ -65,7 +77,7 @@ log "skills -> $linked linked, $skipped claude-only"
 #    Codex では /prompts:<name> で呼ぶ
 mkdir -p "$CODEX_DIR/prompts"
 for link in "$CODEX_DIR"/prompts/*; do
-  [[ -L "$link" ]] && rm "$link"
+  [[ -L "$link" && "$(readlink "$link")" == "$CLAUDE_DIR/commands/"* ]] && rm "$link"
 done
 cmds=0
 cmds_skipped=0
@@ -80,6 +92,11 @@ for f in "$CLAUDE_DIR"/commands/*.md; do
 done
 log "prompts -> $cmds linked, $cmds_skipped claude-only"
 shopt -u nullglob
+
+# 除外リストの名前が何にも一致しなかったら警告（typo・リネームずれの検知）
+for e in "${exclude[@]+"${exclude[@]}"}"; do
+  [[ "$matched" == *" $e "* ]] || log "WARN: claude-only.txt の '$e' に一致する skill/コマンドが無い（typo? リネーム済み?）"
+done
 
 log ""
 log "MCP は codex mcp add で登録済み（冪等でないため sync 対象外）。"

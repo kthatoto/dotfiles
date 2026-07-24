@@ -17,7 +17,10 @@ slack-ask                 # mcp__plugin_slack_slack__*
 # Claude Code 固有の成果物・機構が前提
 fable-prompt-writer       # Claude Fable 向けプロンプト生成
 codebase-onboarding       # CLAUDE.md 生成 + Artifact
-search-first              # researcher subagent への委譲が前提
+
+# 本体が PreToolUse hook（Codex に skill hooks 機構がない）
+careful
+freeze
 
 # --- コマンド（~/.claude/commands/） ---
 # ~/.claude/session-data/ と Claude Code のセッション機構が前提
