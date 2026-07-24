@@ -83,6 +83,7 @@
 - **問題**: これらの skill は `~/.claude/skills/gstack/bin/*` のスクリプト群を呼ぶが、**`~/.claude/skills/gstack` は存在しない**（`ls` で確認済み。`~/.gstack` のデータディレクトリだけ残存）。上流（ECC 系）から取り込んだ際の残骸と推測。
 - **失敗シナリオ**: skill 起動のたびに preamble のスクリプト呼び出しが失敗し、モデルがエラー処理に手数を使う。Codex 側では「Claude 固有依存」に見えるが、実際は両環境共通の腐敗。
 - **直し方**: 共有可否の判定変更ではなく、skill 側から gstack 参照を削るのが本筋（別タスク。skill-stocktake の対象候補）。
+- **対応済み(2026-07-24)**: careful / freeze / investigate / plan-eng-review / review / ship の SKILL.md から gstack 参照を全除去（`grep -rn gstack */SKILL.md` ゼロ件）。各 `SKILL.md.tmpl` は削除し SKILL.md を実体の正典化（`{{PREAMBLE}}` 展開で gstack が再注入されるのを防ぐ。`bun run gen:skill-docs` はこの環境で未運用）。preamble / telemetry / Contributor Mode を丸ごと削除、Completeness Principle は `CC+gstack`→`AI-assisted coding` に de-brand して温存、body の gstack-* bin 呼び出し（review-log / diff-scope / config get codex_reviews / slug 等）は死んだ配管として除去し人間向け手順は温存。freeze の state dir は `$HOME/.gstack` → `$HOME/.claude/freeze` に変更（check-freeze.sh・investigate と協調）。`.gstack/no-test-bootstrap` → `.claude/no-test-bootstrap`。残置: hook 本体 check-careful.sh / check-freeze.sh の `~/.gstack/analytics` 追記のみ（fail-silent・SKILL.md スコープ外・要否はユーザー判断）。
 
 ### 9. Git Workflow の二重管理: AGENTS.md と rules/git-workflow.md
 
@@ -90,6 +91,7 @@
 - **問題**: Claude Code は両方を読むため完全な重複。片方だけ直すと静かに矛盾する（既に差分あり: rules 側だけ「Attribution disabled globally via ~/.claude/settings.json」と書かれているが、settings.json に該当キーは無い＝記述自体も陳腐化している。grep で確認済み）。
 - **失敗シナリオ**: 数ヶ月後に AGENTS.md 側だけコミット形式を変更 → Claude は新旧両方の指示を同時に読み、挙動が不定になる。
 - **直し方**: `rules/git-workflow.md` を削除（内容は AGENTS.md に完全包含されている。attribution の行は事実と不一致なので消してよい。attribution を本当に無効化したいなら settings.json に設定を入れるのが先）。
+- **対応済み(2026-07-24)**: `~/.claude/rules/git-workflow.md` を削除（AGENTS.md の Git Workflow 節に完全包含を確認。attribution 行は事実不一致のため復活させず、settings.json への設定追加もしていない）。
 
 ### 10. rules/ の腐敗（共有可否とは独立の既存問題）
 
@@ -99,6 +101,7 @@
   - `hooks.md` — 記載の Prettier/tsc hook は実際の settings.json の hooks 構成（guard / log / compact-suggest 系）と一致しない
 - **失敗シナリオ**: モデルが存在しない common ルールや agent を前提に振る舞う。指示ファイルの信頼性が下がる。
 - **直し方**: リンク行と e2e-runner 記述を削除、hooks.md は削除か実態に合わせて書き直し。
+- **対応済み(2026-07-24)**: coding-style / patterns / security / testing の `../common/*.md` 継承リンク行を削除、testing の e2e-runner「Agent Support」節を削除。hooks.md は実 hooks（pretooluse-guard / log-skill-usage 系のグローバルハーネス hook で、TS/JS スコープの rules ではない）と一致せず記載も全陳腐化のためファイルごと削除。削除前に rules/ 全体を scratchpad へ退避。
 
 ### 11. AGENTS.md:3-4 の括弧書きが読み手（特に Codex）に不明瞭
 
@@ -153,6 +156,9 @@ Codex に移植済みの 5 個（chrome-browser / godot / notion / freee / sentr
 `x-bookmarks/SKILL.md` は「Chrome DevTools MCP」のツール名（list_pages / select_page / evaluate_script）を指定するが、
 この名前のツールを持つ MCP は Claude 側にも Codex 側にも現在登録されていない（登録済みの chrome-browser は
 list_tabs / switch_tab / evaluate と別名）。共有可否の問題ではなく skill 自体の更新が必要。
+
+- **対応済み(2026-07-24)**: `x-bookmarks/SKILL.md` と `~/ghq/kthatoto/home/CLAUDE.md` の X Bookmarks 節を、登録済み chrome-browser MCP のツール名（list_pages→list_tabs / select_page→switch_tab(index指定) / evaluate_script→evaluate / navigate / get_content）に書き換え。スクレイピング JS 本体は温存（tool 名の整合のみ）。
+- **未決(ユーザー判断待ち)**: グローバルメモリ `~/.claude/memory/reference_chrome_devtools_mcp.md`（chrome-devtools-mcp `--autoConnect` の setup 手順）と `feedback_chrome_devtools_background.md`（「Chrome DevTools MCP(background:true) を使う」嗜好）は、上記の登録済み chrome-browser とは**別 MCP（公式 chrome-devtools-mcp、list_pages 系）**を指しており、現在このセッションでは chrome-devtools-mcp のツールは読み込まれていない。x-bookmarks を chrome-browser に寄せた一方でメモリは chrome-devtools-mcp を指したままなので、「chrome-browser に統一」か「chrome-devtools-mcp を再登録して正典に戻す」かはユーザーの tooling 判断。掃除タスクでは勝手に書き換えず残置した。
 
 ---
 
